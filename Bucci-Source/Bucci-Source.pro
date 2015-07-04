@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         buccimain.cpp \
     settings.cpp \
-    buccigame.cpp
+    buccigame.cpp \
+    card.cpp
 
 HEADERS  += buccimain.h \
     settings.h \
-    buccigame.h
+    buccigame.h \
+    card.h
 
 FORMS    += buccimain.ui

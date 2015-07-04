@@ -4,6 +4,8 @@
 
 BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
 {
+    card = new Card();
+
     turn = 0;
     cardsInHand = 3;
 
@@ -15,7 +17,8 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     timer->setInterval(500);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start();
-    this->setVecs();
+
+    card->init();
 
 }
 
@@ -43,11 +46,7 @@ BucciGame::~BucciGame()
 
 void BucciGame::setVecs()
 {
-    for(int i = 0; i < 3; i++)
-    {
-        playerFaceDown = new QRect(this->width() / 2 + 30, this->height() / 4 - 20, 30, 40);
-        playerCardsFaceDown.push_back(playerFaceDown);
-    }
+
 }
 
 

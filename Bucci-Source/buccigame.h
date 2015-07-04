@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <vector>
 #include <QRect>
+#include "card.h"
 
 class BucciGame : public QWidget
 {
@@ -18,19 +19,18 @@ private:
     int turn;
     int cardsInHand;
 
-    //========================
-    //Change to card object.
+    vector<Card*>deck;
+    vector<Card*>playerCardsFaceDown;
+    vector<Card*>playerCardsFaceUp;
 
-    vector<QRect*>playerCardsFaceDown;
-    vector<QRect*>playerCardsFaceUp;
-
-    //========================
 
     enum cardSuit {SPADE, CLUB, DIAMOND, HEART};
     enum cardValue {ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
 
     QRect drawStack, discardPile, deadPile, playerHand, playerFaceUp, playerFaceDown;
     QTimer *timer;
+
+    Card *card;
 
     void setVecs();
 signals:
