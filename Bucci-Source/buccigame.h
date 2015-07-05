@@ -17,11 +17,11 @@ public:
 
 private:
     int turn;
-    int cardsInHand;
 
-    vector<Card*>deck;
-    vector<Card*>playerCardsFaceDown;
-    vector<Card*>playerCardsFaceUp;
+    vector<Card>deck;
+    vector<Card>shuffledDeck;
+    vector<Card>playerCardsFaceDown;
+    vector<Card>playerCardsFaceUp;
 
 
     enum cardSuit {SPADE, CLUB, DIAMOND, HEART};
@@ -33,7 +33,8 @@ private:
     Card *card;
 
     void setVecs();
-signals:
+
+    bool contains(Card card, vector<Card> &deck);
 
 public slots:
 };

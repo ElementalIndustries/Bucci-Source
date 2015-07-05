@@ -8,12 +8,12 @@ QString deck[4][13];
 
 Card::Card()
 {
-
+    value = " ";
 }
 
 Card::~Card()
 {
-
+//    delete value;
 }
 
 void Card::init()
@@ -95,8 +95,22 @@ void Card::init()
     }
 }
 
+void Card::setCardValue(QString value)
+{
+//    delete this->value;
+    this->value = value;
+}
+
 QString Card::getCardAt(int i, int j)
 {
     return deck[i][j];
 }
+
+QString Card::getCardValue()
+{
+    return value;
+}
+
+
+
 

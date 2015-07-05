@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         buccimain.cpp \
     settings.cpp \
     buccigame.cpp \
-    card.cpp
+    card.cpp \
+    player.cpp
 
 HEADERS  += buccimain.h \
     settings.h \
     buccigame.h \
-    card.h
+    card.h \
+    player.h
 
 FORMS    += buccimain.ui
