@@ -17,12 +17,14 @@ SOURCES += main.cpp\
     settings.cpp \
     buccigame.cpp \
     card.cpp \
-    player.cpp
+    player.cpp \
+    deck.cpp
 
 HEADERS  += buccimain.h \
     settings.h \
     buccigame.h \
     card.h \
-    player.h
+    player.h \
+    deck.h
 
 FORMS    += buccimain.ui

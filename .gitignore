@@ -1,4 +1,6 @@
 *.class
+/build-Bucci-Source-Desktop_Qt_5_4_0_MinGW_32bit-Debug
+/build-Bucci-Source-Desktop_Qt_5_4_1_MinGW_32bit-Debug
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
