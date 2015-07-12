@@ -29,6 +29,8 @@ public:
 private:
     int turn;
 
+    bool handEmpty, faceUpEmpty, faceDownEmpty;
+
     vector<Card*>deckRef;
     QVector<Card*>shuffledDeck;
     QVector<Card*>discardStack;

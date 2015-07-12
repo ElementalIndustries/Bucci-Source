@@ -5,6 +5,7 @@
 Player::Player()
 {
     numOfCardsInhand = 0;
+
 }
 
 Player::~Player()
@@ -50,14 +51,25 @@ void Player::removeCard(int index)
     hand.erase(hand.begin() + index);
 }
 
-void Player::replaceCard(int index, Card *card)
+void Player::replaceCard(int vector, int index, Card *card)
 {
-    hand.replace(index, card);
+    if(0 == vector)
+    {
+        playerCardsFaceDown.replace(index, card);
+    }
+    else if (1 == vector)
+    {
+        playerCardsFaceUp.replace(index, card);
+    }
+    else if(2 == vector)
+    {
+        hand.replace(index, card);
+    }
 }
 
 int Player::getNumOfCardsInHand()
 {
-    return hand.size();
+    return numOfCardsInhand;
 }
 
 int Player::getNumOfFaceUps()

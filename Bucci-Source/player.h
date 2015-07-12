@@ -16,7 +16,7 @@ public:
     void setFaceDown(Card *card);
     void setFaceUp(Card *card);
     void removeCard(int index);
-    void replaceCard(int index, Card* card);
+    void replaceCard(int vector, int index, Card* card);
 
     int getNumOfCardsInHand();
     int getNumOfFaceUps();

@@ -17,7 +17,10 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     pickup->move(this->width() / 2 - 66, this->height() - 30);
     pickup->resize(132, 25);
 
-    turn = 0;
+//    turn = 0;
+    handEmpty = false;
+    faceUpEmpty = false;
+    faceDownEmpty = false;
 
     drawStack = QRect(this->width() / 2 + 26, this->height() / 2 - 20, 30, 40);
     discardPile = QRect(this->width() / 2 - 20, this->height() / 2 - 20, 30, 40);
@@ -158,7 +161,7 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
 {
     if(e->button() == Qt::LeftButton)
     {
-        if(-1 == player->getCardAt(0)->getCompareValue() && -1 == shuffledDeck.at(0)->getCompareValue() && -1 == player->getFaceUpAt(0)->getCompareValue() && -1 == player->getFaceUpAt(1)->getCompareValue() && -1 == player->getFaceUpAt(2)->getCompareValue())
+        if(handEmpty && faceUpEmpty)
         {
             for(int i = 0; i < 3; i++)
             {
@@ -234,7 +237,7 @@ faceDownTryAgain:
                 }
             }
         }
-        else if((player->getCardAt(0)->getCompareValue() == -1) && shuffledDeck.at(0)->getCompareValue() == -1)
+        else if(handEmpty && shuffledDeck.at(0)->getCompareValue() == -1)
         {
             for(int i = 0; i < 3; i++)
             {
@@ -301,19 +304,25 @@ faceDownTryAgain:
                     else
                     {
                         showInvalidMove = true;
-                        goto faceUpTryAgain;
+//                        goto faceUpTryAgain;
                     }
 
                     Card *card = new Card(this);
-                    player->replaceCard(i, card);
+                    player->replaceCard(1,  i, card);
 
                     turn++;
-faceUpTryAgain:
+
+                    if(player->getFaceUpAt(0)->getCompareValue() == -1 && player->getFaceUpAt(1)->getCompareValue() == -1 && player->getFaceUpAt(2)->getCompareValue() == -1)
+                    {
+                        faceUpEmpty = true;
+                    }
+
+//faceUpTryAgain:
                     break;
                 }
             }
         }
-        else if(player->hand.at(0)->getCompareValue() != -1)
+        else if(!handEmpty)
         {
             qDebug() << "Cards in hand:" << player->getNumOfCardsInHand();
 
@@ -371,6 +380,7 @@ faceUpTryAgain:
                             player->removeCard(i);
                             goto newTurn;
                         }
+
                     }
                     else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getCardAt(i)->getCompareValue())
                     {
@@ -412,14 +422,25 @@ faceUpTryAgain:
                         shuffledDeck.push_back(card);
                         shuffledDeck.erase(shuffledDeck.begin());
                     }
+
+                    if(player->hand.at(0)->getCompareValue() == -1 && player->hand.at(1)->getCompareValue() == -1 && player->hand.at(2)->getCompareValue() == -1)
+                    {
+                        player->hand.clear();
+                        handEmpty = true;
+                    }
+
+
 newTurn:
                     turn++;
 
                     //If the last card removed was the last card in the QVector, do not adjust the card position
                     //This will throw an 'out of range' exception without the 'if' condition statement
-                    if(i < player->getNumOfCardsInHand())
+                    if(!handEmpty)
                     {
-                        setCardCoord(2, i);
+                        if(i < player->getNumOfCardsInHand())
+                        {
+                            setCardCoord(2, i);
+                        }
                     }
 tryAgain:
                     break;
@@ -592,15 +613,42 @@ newRand:
 
 void BucciGame::setCardCoord(int vector, int index)
 {
-    int cardsPerRow;
+    int cardsPerRow, cardsPerSecondRow, cardsPerThirdRow, cardsPerFourthRow;
 
-    if(player->getNumOfCardsInHand() > 12)
+    if(player->getNumOfCardsInHand() < 48)
     {
-        cardsPerRow = 12;
+        if(player->getNumOfCardsInHand() < 36)
+        {
+            if(player->getNumOfCardsInHand() < 24)
+            {
+                if(player->getNumOfCardsInHand() < 12)
+                {
+                    cardsPerRow = player->getNumOfCardsInHand();
+                }
+                else
+                {
+                    cardsPerRow = 12;
+                    cardsPerSecondRow = player->getNumOfCardsInHand() - 15;
+                }
+            }
+            else
+            {
+                cardsPerRow = 12;
+                cardsPerSecondRow = 12;
+                cardsPerThirdRow = player->getNumOfCardsInHand() - 38;
+            }
+        }
+        else
+        {
+            cardsPerRow = 12;
+            cardsPerSecondRow = 12;
+            cardsPerThirdRow = 12;
+            cardsPerFourthRow = player->getNumOfCardsInHand() - 51;
+        }
     }
     else
     {
-        cardsPerRow = player->getNumOfCardsInHand();
+        cardsPerFourthRow = player->getNumOfCardsInHand();
     }
 
     if(0 == vector) // face down
@@ -650,7 +698,7 @@ void BucciGame::setCardCoord(int vector, int index)
         {
             if(12 == index)
             {
-                player->hand.at(index)->setX(this->width() / 2 - 66 - (23 * (player->getNumOfCardsInHand() - 15)));
+                player->hand.at(index)->setX(this->width() / 2 - 66 - (23 * (cardsPerSecondRow)));
             }
             else
             {
