@@ -5,10 +5,10 @@
 using namespace std;
 
 
-Card::Card()
+Card::Card(QWidget *w = 0)
 {
-    posX = 100;
-    posY = 250;
+    posX = w->width() / 2 - 20;
+    posY = w->height() - (w->height() / 3);
     sizeX = 30;
     sizeY = 40;
 
@@ -18,8 +18,8 @@ Card::Card()
 
     compareValue = -1;
 
-    defaultX = 100;
-    defaultY = 250;
+    defaultX = w->width() / 2 - 20;
+    defaultY = w->height() - (w->height() / 3);
 }
 
 Card::~Card()
@@ -49,11 +49,14 @@ void Card::setCompareValue(int cValue)
 
 void Card::drawCard(QPainter &painter, int vector, QString value)
 {
+    bool drawText = false;
+
     if(0 == vector)//Face Down cards
     {
         changeImage("../Bucci-Source/Images/card_back.png");
         painter.drawPixmap(posX, posY, 30, 40, *cardFace);
         painter.drawRect(posX, posY, 30, 40);
+        drawText = false;
     }
 
     if(1 == vector || 2 == vector)//1 = Face up cards. 2 = Hand
@@ -61,30 +64,39 @@ void Card::drawCard(QPainter &painter, int vector, QString value)
         if(value.contains('S'))
         {
             changeImage("../Bucci-Source/Images/card_spade.png");
+            painter.drawPixmap(posX, posY, 30, 40, *cardFace);
+            drawText = true;
         }
         else if(value.contains('C'))
         {
             changeImage("../Bucci-Source/Images/card_club.png");
+            painter.drawPixmap(posX, posY, 30, 40, *cardFace);
+            drawText = true;
         }
         else if(value.contains('D'))
         {
             changeImage("../Bucci-Source/Images/card_diamond.png");
+            painter.drawPixmap(posX, posY, 30, 40, *cardFace);
+            drawText = true;
         }
         else if(value.contains('H'))
         {
             changeImage("../Bucci-Source/Images/card_heart.png");
+            painter.drawPixmap(posX, posY, 30, 40, *cardFace);
+            drawText = true;
         }
         else
         {
-            changeImage("../Bucci-Source/Images/card_back.png");
+            drawText = false;
         }
 
         QString val = value;
         val.truncate(val.indexOf(' '));
         val.insert(0,' ');
-        painter.drawPixmap(posX, posY, 30, 40, *cardFace);
+
         painter.drawRect(posX, posY, 30, 40);
-        painter.drawText(posX, posY + 10, val);
+
+        if(drawText) { painter.drawText(posX, posY + 10, val); }
 
     }
 }

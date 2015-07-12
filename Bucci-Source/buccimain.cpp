@@ -28,4 +28,5 @@ void BucciMain::on_pushButton_clicked()
     }
 
     bucciGame->show();
+
 }

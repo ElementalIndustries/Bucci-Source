@@ -4,13 +4,14 @@
 #include <QString>
 #include <QPixmap>
 #include <vector>
+#include <QWidget>
 
 using namespace std;
 
 class Card
 {
 public:
-    Card();
+    Card(QWidget *w);
     ~Card();
 
     void init();

@@ -105,7 +105,6 @@ void Deck::init()
             QString card = QString("%1 %2, %3").arg(fValue).arg(suit).arg(compareValue);
 
             deck[j][k] = card;
-            qDebug() << deck[j][k];
         }
     }
 

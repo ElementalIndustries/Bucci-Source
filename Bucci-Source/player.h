@@ -17,7 +17,6 @@ public:
     void setFaceUp(Card *card);
     void removeCard(int index);
     void replaceCard(int index, Card* card);
-    void setCardCoordAt(int vector, int index, QWidget *w);
 
     int getNumOfCardsInHand();
     int getNumOfFaceUps();
@@ -31,10 +30,10 @@ public:
     bool isFaceDownEmpty();
 
     QVector<Card*>hand;
-private:
-    int numOfCardsInhand;
     QVector<Card*>playerCardsFaceDown;
     QVector<Card*>playerCardsFaceUp;
+private:
+    int numOfCardsInhand;
 };
 
 #endif // PLAYER_H

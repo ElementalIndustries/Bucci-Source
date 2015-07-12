@@ -47,58 +47,12 @@ void Player::setFaceUp(Card *card)
 
 void Player::removeCard(int index)
 {
-    foreach(Card* card, hand) qDebug() << "Before" << card->getCardValue();
-    qDebug() << "============";
-    hand.removeAt(index);
-    foreach(Card* card, hand) qDebug() << "After" << card->getCardValue();
+    hand.erase(hand.begin() + index);
 }
 
 void Player::replaceCard(int index, Card *card)
 {
     hand.replace(index, card);
-}
-
-void Player::setCardCoordAt(int vector, int index, QWidget *w)
-{
-    if(0 == vector) //face down
-    {
-        if(0 == index)
-        {
-            (*(hand.at(index))).setX(w->width() / 2 - 55);
-        }
-        else if(1 == index || 2 == index)
-        {
-            (*(hand.at(index))).setX((*(hand.at(index - 1))).getPosX() + 45);
-        }
-
-        (*(hand.at(index))).setY(w->height() - (w->height() / 3));
-    }
-    else if(1 == vector) //face up
-    {
-        if(0 == index)
-        {
-            (*(hand.at(index))).setX(w->width() / 2 - 55);
-        }
-        else if(1 == index || 2 == index)
-        {
-            (*(hand.at(index))).setX((*(hand.at(index - 1))).getPosX() + 45);
-        }
-
-        (*(hand.at(index))).setY(w->height() - (w->height() / 3) + 15);
-    }
-    else if(2 == vector) //hand
-    {
-        if(0 == index)
-        {
-            (*(hand.at(index))).setX(w->width() / 2 - 55);
-        }
-        else if(1 == index || 2 == index)
-        {
-            (*(hand.at(index))).setX((*(hand.at(index - 1))).getPosX() + 45);
-        }
-
-        (*(hand.at(index))).setY(w->height() - (w->height() / 3) + 65);
-    }
 }
 
 int Player::getNumOfCardsInHand()

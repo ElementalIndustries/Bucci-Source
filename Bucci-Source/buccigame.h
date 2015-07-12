@@ -24,13 +24,13 @@ public:
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
 
-    bool contains(Card *card, vector<Card *> deck);
+    bool contains(Card *card, QVector<Card *> deck);
 
 private:
     int turn;
 
     vector<Card*>deckRef;
-    vector<Card*>shuffledDeck;
+    QVector<Card*>shuffledDeck;
     QVector<Card*>discardStack;
     QVector<Card*>deadStack;
 
@@ -41,16 +41,17 @@ private:
     QTimer *timer;
     QPixmap *cardBack;
     QPushButton *pickup;
-    QVBoxLayout *layout;
 
     Deck *deck;
     Player *player;
 
     void setVecs();
+    void setCardCoord(int vector, int index);
 
     QPoint *mousePos;
 
     bool showInvalidMove;
+
 public slots:
     void updateField();
     void pickupCards();
