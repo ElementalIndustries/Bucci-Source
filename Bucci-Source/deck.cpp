@@ -7,12 +7,12 @@ QString deck[4/* Suit */][13/* Card Value */];
 Deck::Deck()
 {
 
-}
+}//end of Deck c'tor
 
 Deck::~Deck()
 {
-
-}
+    delete[] deck;
+}//end of Deck c'tor
 
 void Deck::init()
 {
@@ -109,10 +109,10 @@ void Deck::init()
     }
 
     qDebug() << "Deck init complete";
-}
+}//end of init
 
 QString Deck::getCardAt(int i, int j)
 {
     return deck[i][j];
-}
+}//end of getCardAt
 

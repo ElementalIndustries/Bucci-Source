@@ -12,12 +12,17 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     deck = new Deck();
     player = new Player();
 
-    pickup = new QPushButton("Pick Up Pile", this);
     this->resize(580, 580);
+
+    pickup = new QPushButton("Pick Up Pile", this);
     pickup->move(this->width() / 2 - 66, this->height() - 30);
     pickup->resize(132, 25);
 
-//    turn = 0;
+    exit = new QPushButton("Exit", this);
+    exit->move(10, this->height() - 30);
+    exit->resize(80, 25);
+
+    turn = 0;
     handEmpty = false;
     faceUpEmpty = false;
     faceDownEmpty = false;
@@ -25,6 +30,7 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     drawStack = QRect(this->width() / 2 + 26, this->height() / 2 - 20, 30, 40);
     discardPile = QRect(this->width() / 2 - 20, this->height() / 2 - 20, 30, 40);
     deadPile = QRect(this->width() / 2 - 66, this->height() / 2 - 20, 30, 40);
+
     cardBack = new QPixmap("../Bucci-Source/Images/card_back.png");
 
     timer = new QTimer();
@@ -33,6 +39,7 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     timer->start();
 
     connect(pickup, SIGNAL(clicked()), this, SLOT(pickupCards()));
+    connect(exit, SIGNAL(clicked()), this, SLOT(close()));
 
     //initializes the deck
     deck->init();
@@ -41,6 +48,37 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     showInvalidMove = false;
 
 }//end c'tor
+
+BucciGame::~BucciGame()
+{
+    qDebug() << "Deconstructor called";
+    delete timer;
+    delete player;
+    delete exit;
+    delete cardBack;
+    delete pickup;
+    delete deck;
+
+    if(!shuffledDeck.empty())
+    {
+        shuffledDeck.clear();
+    }
+
+    if(!discardStack.empty())
+    {
+        discardStack.clear();
+    }
+
+    if(!deckRef.empty())
+    {
+        deckRef.clear();
+    }
+
+    if(!deadStack.empty())
+    {
+        deadStack.clear();
+    }
+}//end of dec'tor
 
 void BucciGame::paintEvent(QPaintEvent *e)
 {
@@ -56,26 +94,26 @@ void BucciGame::paintEvent(QPaintEvent *e)
 
     if(showInvalidMove)
     {
-        paint.drawText(discardPile.x() - 10, discardPile.y() + 70, QString("Invalid Move"));
+        paint.drawText(discardPile.x() - 10, discardPile.y() + 55, QString("Invalid Move"));
     }
 
     for(int i = 0; i < 3; i++)
     {
-        if(0 == i && !player->isFaceDownEmpty()) //face downs
+        if(0 == i && !faceDownEmpty) //face downs
         {
             foreach(Card *card, player->playerCardsFaceDown)
             {
                 card->drawCard(paint, i , card->getCardValue());
             }
         }
-        else if(1 == i && !player->isFaceUpEmpty()) //face ups
+        else if(1 == i && !faceUpEmpty) //face ups
         {
             foreach(Card *card, player->playerCardsFaceUp)
             {
                 card->drawCard(paint, i, card->getCardValue());
             }
         }
-        else if(2 == i && player->hand.at(0)->getCompareValue() != -1) //hand
+        else if(2 == i && !handEmpty) //hand
         {
             for(int j = 0; j < player->getNumOfCardsInHand(); j++)
             {
@@ -144,10 +182,15 @@ void BucciGame::paintEvent(QPaintEvent *e)
 
     QPainter devPaint(this);
     devPaint.setPen(Qt::red);
-    devPaint.drawText(10, 20, QString("Player face downs: %1, %2, %3").arg((*(player->getFaceDownAt(0))).getCompareValue()).arg((*(player->getFaceDownAt(1))).getCompareValue()).arg((*(player->getFaceDownAt(2))).getCompareValue()));
-    devPaint.drawText(10, 30, QString("Player face ups: %1, %2, %3").arg((*(player->getFaceUpAt(0))).getCompareValue()).arg((*(player->getFaceUpAt(1))).getCompareValue()).arg((*(player->getFaceUpAt(2))).getCompareValue()));
-    devPaint.drawText(10, 40, QString("Player hand: %1, %2, %3").arg((*(player->getCardAt(0))).getCompareValue()).arg((*(player->getCardAt(1))).getCompareValue()).arg((*(player->getCardAt(2))).getCompareValue()));
-    devPaint.drawText(10, 50, QString("Cards in hand: %1").arg(player->getNumOfCardsInHand()));
+
+    if(!faceDownEmpty) { devPaint.drawText(10, 20, QString("Player face downs: %1, %2, %3").arg((*(player->getFaceDownAt(0))).getCompareValue()).arg((*(player->getFaceDownAt(1))).getCompareValue()).arg((*(player->getFaceDownAt(2))).getCompareValue())); }
+
+    if(!faceUpEmpty) { devPaint.drawText(10, 30, QString("Player face ups: %1, %2, %3").arg((*(player->getFaceUpAt(0))).getCompareValue()).arg((*(player->getFaceUpAt(1))).getCompareValue()).arg((*(player->getFaceUpAt(2))).getCompareValue())); }
+
+    if(!handEmpty) { devPaint.drawText(10, 40, QString("Player hand: %1, %2, %3").arg((*(player->getCardAt(0))).getCompareValue()).arg((*(player->getCardAt(1))).getCompareValue()).arg((*(player->getCardAt(2))).getCompareValue())); }
+
+    if(!handEmpty) { devPaint.drawText(10, 50, QString("Cards in hand: %1").arg(player->getNumOfCardsInHand())); }
+
     devPaint.drawText(10, 60, QString("Discard: %1").arg((*(discardStack.at(discardStack.size() - 1))).getCompareValue()));
 
     if(!deadStack.empty()) { devPaint.drawText(10, 70, QString("Dead: %1").arg((*(deadStack.at(deadStack.size() - 1))).getCardValue())); }
@@ -167,7 +210,7 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
             {
                 if((*(player->getFaceDownAt(i))).containsPoint(e->x(), e->y(), QRect(player->getFaceDownAt(i)->getPosX(), player->getFaceDownAt(i)->getPosY(), player->getFaceDownAt(i)->getSizeX(), player->getFaceDownAt(i)->getSizeY())))
                 {
-                    qDebug() << "Clicked in card" << i << ". Compare Value:" << player->getFaceDownAt(i)->getCardValue();
+                    qDebug() << "Clicked in card" << i << ". Compare Value:" << player->getFaceDownAt(i)->getCompareValue();
 
                     if(player->getFaceDownAt(i)->getCompareValue() == 2
                             || player->getFaceDownAt(i)->getCompareValue() == 10
@@ -227,12 +270,19 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                     else
                     {
                         showInvalidMove = true;
-                        goto faceDownTryAgain;
+                        break;
                     }
 
+                    Card *card = new Card(this);
+                    player->replaceCard(0,  i, card);
+
+                    if(player->getFaceDownAt(0)->getCompareValue() == -1 && player->getFaceDownAt(1)->getCompareValue() == -1 && player->getFaceDownAt(2)->getCompareValue() == -1)
+                    {
+                        player->playerCardsFaceDown.clear();
+                        faceDownEmpty = true;
+                    }
 
                     turn++;
-faceDownTryAgain:
                     break;
                 }
             }
@@ -304,7 +354,7 @@ faceDownTryAgain:
                     else
                     {
                         showInvalidMove = true;
-//                        goto faceUpTryAgain;
+                        break;
                     }
 
                     Card *card = new Card(this);
@@ -314,18 +364,16 @@ faceDownTryAgain:
 
                     if(player->getFaceUpAt(0)->getCompareValue() == -1 && player->getFaceUpAt(1)->getCompareValue() == -1 && player->getFaceUpAt(2)->getCompareValue() == -1)
                     {
+                        player->playerCardsFaceUp.clear();
                         faceUpEmpty = true;
                     }
 
-//faceUpTryAgain:
                     break;
                 }
             }
         }
         else if(!handEmpty)
         {
-            qDebug() << "Cards in hand:" << player->getNumOfCardsInHand();
-
             for(int i = 0; i < player->getNumOfCardsInHand(); i++)
             {
                 if((*(player->getCardAt(i))).containsPoint(e->localPos().x(), e->localPos().y(), QRect((*(player->getCardAt(i))).getPosX(), (*(player->getCardAt(i))).getPosY(), (*(player->getCardAt(i))).getSizeX(), (*(player->getCardAt(i))).getSizeY())))
@@ -382,7 +430,9 @@ faceDownTryAgain:
                         }
 
                     }
-                    else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getCardAt(i)->getCompareValue())
+                    //Handles all non-special fuction cards and being able to play aces when a two is the top card in the discard pile
+                    else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getCardAt(i)->getCompareValue()
+                            || discardStack.at(discardStack.size() - 1)->getCompareValue() == 2)
                     {
                         if(showInvalidMove)
                             showInvalidMove = false;
@@ -428,8 +478,6 @@ faceDownTryAgain:
                         player->hand.clear();
                         handEmpty = true;
                     }
-
-
 newTurn:
                     turn++;
 
@@ -450,33 +498,6 @@ tryAgain:
     }
 }//end of mousePressEvent
 
-
-BucciGame::~BucciGame()
-{
-    qDebug() << "Deconstructor called";
-    delete timer;
-    delete player;
-
-    if(!shuffledDeck.empty())
-    {
-        shuffledDeck.clear();
-    }
-
-    if(!discardStack.empty())
-    {
-        discardStack.clear();
-    }
-
-    if(!deckRef.empty())
-    {
-        deckRef.clear();
-    }
-
-    if(!deadStack.empty())
-    {
-        deadStack.clear();
-    }
-}//end of dec'tor
 
 void BucciGame::setVecs()
 {
@@ -573,7 +594,7 @@ newRand:
                     (*(player->getFaceUpAt(j))).setX((*(player->getFaceUpAt(j - 1))).getPosX() + 46);
                 }
 
-                (*(player->getFaceUpAt(j))).setY(this->height() - (this->height() / 3) + 15);
+                (*(player->getFaceUpAt(j))).setY(this->height() - (this->height() / 3)  + 15);
 
                 shuffledDeck.erase(shuffledDeck.begin());
 
@@ -602,7 +623,16 @@ newRand:
     //Sets the first card
     //===================
 
+newCard:
+    if(shuffledDeck.at(0)->getCompareValue() == 10 || shuffledDeck.at(0)->getCompareValue() == 1)
+    {
+        shuffledDeck.insert(shuffledDeck.begin() + 22, shuffledDeck.at(0));
+        shuffledDeck.erase(shuffledDeck.begin());
+        goto newCard;
+    }
+
     discardStack.push_back(shuffledDeck.at(0));
+
     shuffledDeck.erase(shuffledDeck.begin());
 
 
@@ -611,17 +641,18 @@ newRand:
     qDebug() << "Done";
 }//end of setVecs
 
+
 void BucciGame::setCardCoord(int vector, int index)
 {
-    int cardsPerRow, cardsPerSecondRow, cardsPerThirdRow, cardsPerFourthRow;
+    int cardsPerRow, cardsPerSecondRow, cardsPerThirdRow, cardsPerFourthRow, cardsPerFifthRow;
 
-    if(player->getNumOfCardsInHand() < 48)
+    if(player->getNumOfCardsInHand() < 48) //Four rows of cards
     {
-        if(player->getNumOfCardsInHand() < 36)
+        if(player->getNumOfCardsInHand() < 36) //Three rows of cards
         {
-            if(player->getNumOfCardsInHand() < 24)
+            if(player->getNumOfCardsInHand() < 24) //Two rows of cards
             {
-                if(player->getNumOfCardsInHand() < 12)
+                if(player->getNumOfCardsInHand() < 12) //One row of cards
                 {
                     cardsPerRow = player->getNumOfCardsInHand();
                 }
@@ -635,7 +666,7 @@ void BucciGame::setCardCoord(int vector, int index)
             {
                 cardsPerRow = 12;
                 cardsPerSecondRow = 12;
-                cardsPerThirdRow = player->getNumOfCardsInHand() - 38;
+                cardsPerThirdRow = player->getNumOfCardsInHand() - 39;
             }
         }
         else
@@ -648,7 +679,11 @@ void BucciGame::setCardCoord(int vector, int index)
     }
     else
     {
-        cardsPerFourthRow = player->getNumOfCardsInHand();
+        cardsPerRow = 12;
+        cardsPerSecondRow = 12;
+        cardsPerThirdRow = 12;
+        cardsPerFourthRow = 12;
+        cardsPerFifthRow = player->getNumOfCardsInHand() - 55;
     }
 
     if(0 == vector) // face down
@@ -675,7 +710,7 @@ void BucciGame::setCardCoord(int vector, int index)
             player->playerCardsFaceUp.at(index)->setX(player->playerCardsFaceUp.at(index - 1)->getPosX() + 46);
         }
 
-        player->playerCardsFaceUp.at(index)->setY(this->height() - (this->height() / 3) + 15);
+        player->playerCardsFaceUp.at(index)->setY(this->height() - (this->height() / 3)  +  15);
     }
     else if(2 == vector) //hand
     {
@@ -709,14 +744,46 @@ void BucciGame::setCardCoord(int vector, int index)
         }
         else if(36 > index) //You're playing the game wrong if you have this many cards in your hand
         {
+            if(24 == index)
+            {
+                player->getCardAt(index)->setX(this->width() / 2 - 66 - (23 * (cardsPerThirdRow)));
+            }
+            else
+            {
+                player->getCardAt(index)->setX(player->getCardAt(index - 1)->getPosX() + 46);
+            }
+
             player->hand.at(index)->setY(this->height() - (this->height() / 3) + 158);
         }
         else if (48 > index) //How did you... I don't want to know.
         {
+            if(36 == index)
+            {
+                player->getCardAt(index)->setX(this->width() / 2 - 66 - (23 * cardsPerFourthRow));
+            }
+            else
+            {
+                player->getCardAt(index)->setX(player->getCardAt(index - 1)->getPosX() + 46);
+            }
+
             player->hand.at(index)->setY(this->height() - (this->height() / 3) + 204);
+        }
+        else
+        {
+            if(48 == index)
+            {
+                player->getCardAt(index)->setX(this->width() / 2 - 66 - (23 * cardsPerFifthRow));
+            }
+            else
+            {
+                player->getCardAt(index)->setX(player->getCardAt(index - 1)->getPosX() + 46);
+            }
+
+            player->getCardAt(index)->setY(this->height() - (this->height() / 3) + 250);
         }
     }
 }//end of setCardCoord
+
 
 bool BucciGame::contains(Card* card, QVector<Card *> deck)
 {
@@ -745,14 +812,34 @@ void BucciGame::updateField()
     this->update();
 }//end of updateField
 
+
 void BucciGame::pickupCards()
 {
+    if(handEmpty)
+    {
+        handEmpty = false;
+    }
+
     for(int i = 0; i < discardStack.size(); i++)
     {
         qDebug() << i << "of" << discardStack.size();
-        player->setHand(discardStack.at(i));
+
+        //Searches player's hand for any card holding a dummy value.
+        //If dummy value is found (comparisonValue == -1), replace it with a card from the discard pile
+        //otherwise put the card from the discard stack at the end of the player's hand vector
+        if(player->hand != NULL && player->getCardAt(i)->getCompareValue() == -1)
+        {
+            player->replaceCard(2, i, discardStack.at(i));
+        }
+        else
+        {
+            player->setHand(discardStack.at(i));
+        }
+
         player->setNumOfCardsInHand();
+
         setCardCoord(2, i);
+
     }
 
     Card* dummy = new Card(this);

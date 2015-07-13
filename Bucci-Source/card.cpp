@@ -20,42 +20,51 @@ Card::Card(QWidget *w = 0)
 
     defaultX = w->width() / 2 - 20;
     defaultY = w->height() - (w->height() / 3);
-}
+}//end of Card c'tor
 
 Card::~Card()
 {
-
-}
+    delete cardFace;
+}//end of card dec'tor
 
 void Card::setCardValue(QString newValue)
 {
     this->value = newValue;
-}
+}//end of setCardValue
 
 void Card::setX(int x)
 {
     this->posX = x;
-}
+}//end of setX
 
 void Card::setY(int y)
 {
     this->posY = y;
-}
+}//end of setY
 
 void Card::setCompareValue(int cValue)
 {
     this->compareValue = cValue;
-}
+}//end of setCompareValue
 
 void Card::drawCard(QPainter &painter, int vector, QString value)
 {
-    bool drawText = false;
+    bool drawText = false, drawRect = true;
 
     if(0 == vector)//Face Down cards
     {
         changeImage("../Bucci-Source/Images/card_back.png");
-        painter.drawPixmap(posX, posY, 30, 40, *cardFace);
-        painter.drawRect(posX, posY, 30, 40);
+
+        if(!value.contains("This"))
+        {
+            painter.drawPixmap(posX, posY, 30, 40, *cardFace);
+            drawRect = false;
+        }
+        else
+        {
+            drawRect = true;
+        }
+
         drawText = false;
     }
 
@@ -66,40 +75,45 @@ void Card::drawCard(QPainter &painter, int vector, QString value)
             changeImage("../Bucci-Source/Images/card_spade.png");
             painter.drawPixmap(posX, posY, 30, 40, *cardFace);
             drawText = true;
+            drawRect = true;
         }
         else if(value.contains('C'))
         {
             changeImage("../Bucci-Source/Images/card_club.png");
             painter.drawPixmap(posX, posY, 30, 40, *cardFace);
             drawText = true;
+            drawRect = true;
         }
         else if(value.contains('D'))
         {
             changeImage("../Bucci-Source/Images/card_diamond.png");
             painter.drawPixmap(posX, posY, 30, 40, *cardFace);
             drawText = true;
+            drawRect = true;
         }
         else if(value.contains('H'))
         {
             changeImage("../Bucci-Source/Images/card_heart.png");
             painter.drawPixmap(posX, posY, 30, 40, *cardFace);
             drawText = true;
+            drawRect = true;
         }
         else
         {
             drawText = false;
+            drawRect = false;
         }
 
         QString val = value;
         val.truncate(val.indexOf(' '));
         val.insert(0,' ');
 
-        painter.drawRect(posX, posY, 30, 40);
+        if(drawRect) { painter.drawRect(posX, posY, 30, 40); }
 
         if(drawText) { painter.drawText(posX, posY + 10, val); }
 
     }
-}
+}//end of drawCard
 
 void Card::drawCard(QPainter &painter, int vector, QRect rect, QString value)
 {
@@ -139,57 +153,57 @@ void Card::drawCard(QPainter &painter, int vector, QRect rect, QString value)
         painter.drawRect(rect) ;
         painter.drawText(rect, val);
     }
-}
+}//end of drawCard overloaded method
 
 void Card::changeImage(QString image)
 {
-//    delete cardFace;
+    delete cardFace;
     cardFace = new QPixmap(image);
-}
+}//end of changeImage
 
 void Card::initCompareValue(Card *card)
 {
     QString val = this->value;
     QStringList values = val.split(",", QString::SkipEmptyParts);
     compareValue = values[1].trimmed().toInt();
-}
+}//end of initCompareValue
 
 QString Card::getCardValue()
 {
     return this->value;
-}
+}//end of getCardValue
 
 QString Card::getTruncatedValue()
 {
     QString val = this->value;
     val.truncate(val.indexOf(' '));
     return val;
-}
+}//end of getTruncatedValue
 
 int Card::getPosX()
 {
     return this->posX;
-}
+}//end of getPosX
 
 int Card::getPosY()
 {
     return this->posY;
-}
+}//end of getPosY
 
 int Card::getSizeX()
 {
     return this->sizeX;
-}
+}//end of getSizeX
 
 int Card::getSizeY()
 {
     return this->sizeY;
-}
+}//end of getSizeY
 
 int Card::getCompareValue()
 {
     return compareValue;
-}
+}//end of getCompareValue
 
 bool Card::containsPoint(int x, int y, QRect rect)
 {
@@ -206,7 +220,7 @@ bool Card::containsPoint(int x, int y, QRect rect)
     }
 
     return false;
-}
+}//end of contains point
 
 bool Card::equalsValue(Card card, QString compareStr)
 {
@@ -217,7 +231,7 @@ bool Card::equalsValue(Card card, QString compareStr)
     }
     else
         return false;
-}
+}//end of equalsValue
 
 
 

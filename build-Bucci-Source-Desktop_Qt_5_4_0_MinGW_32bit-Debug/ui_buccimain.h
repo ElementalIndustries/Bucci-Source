@@ -19,6 +19,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -27,10 +28,13 @@ class Ui_BucciMain
 {
 public:
     QWidget *centralWidget;
-    QPushButton *pushButton;
-    QPushButton *pushButton_2;
-    QPushButton *pushButton_3;
-    QPushButton *pushButton_4;
+    QWidget *verticalLayoutWidget;
+    QVBoxLayout *vLayout;
+    QPushButton *newGame;
+    QPushButton *stats;
+    QPushButton *settings;
+    QPushButton *exit;
+    QPushButton *howToPlay;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -42,22 +46,43 @@ public:
         BucciMain->resize(400, 300);
         centralWidget = new QWidget(BucciMain);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(150, 20, 93, 28));
-        pushButton_2 = new QPushButton(centralWidget);
-        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
-        pushButton_2->setGeometry(QRect(150, 70, 93, 28));
-        pushButton_3 = new QPushButton(centralWidget);
-        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
-        pushButton_3->setGeometry(QRect(150, 120, 93, 28));
-        pushButton_4 = new QPushButton(centralWidget);
-        pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
-        pushButton_4->setGeometry(QRect(150, 170, 93, 28));
+        verticalLayoutWidget = new QWidget(centralWidget);
+        verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(160, 30, 77, 141));
+        vLayout = new QVBoxLayout(verticalLayoutWidget);
+        vLayout->setSpacing(6);
+        vLayout->setContentsMargins(11, 11, 11, 11);
+        vLayout->setObjectName(QStringLiteral("vLayout"));
+        vLayout->setContentsMargins(0, 0, 0, 0);
+        newGame = new QPushButton(verticalLayoutWidget);
+        newGame->setObjectName(QStringLiteral("newGame"));
+
+        vLayout->addWidget(newGame);
+
+        stats = new QPushButton(verticalLayoutWidget);
+        stats->setObjectName(QStringLiteral("stats"));
+
+        vLayout->addWidget(stats);
+
+        settings = new QPushButton(verticalLayoutWidget);
+        settings->setObjectName(QStringLiteral("settings"));
+
+        vLayout->addWidget(settings);
+
+        exit = new QPushButton(verticalLayoutWidget);
+        exit->setObjectName(QStringLiteral("exit"));
+
+        vLayout->addWidget(exit);
+
+        howToPlay = new QPushButton(verticalLayoutWidget);
+        howToPlay->setObjectName(QStringLiteral("howToPlay"));
+
+        vLayout->addWidget(howToPlay);
+
         BucciMain->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(BucciMain);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 400, 26));
+        menuBar->setGeometry(QRect(0, 0, 400, 21));
         BucciMain->setMenuBar(menuBar);
         mainToolBar = new QToolBar(BucciMain);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -74,10 +99,11 @@ public:
     void retranslateUi(QMainWindow *BucciMain)
     {
         BucciMain->setWindowTitle(QApplication::translate("BucciMain", "BucciMain", 0));
-        pushButton->setText(QApplication::translate("BucciMain", "New Game", 0));
-        pushButton_2->setText(QApplication::translate("BucciMain", "Stats", 0));
-        pushButton_3->setText(QApplication::translate("BucciMain", "Settings", 0));
-        pushButton_4->setText(QApplication::translate("BucciMain", "Exit", 0));
+        newGame->setText(QApplication::translate("BucciMain", "New Game", 0));
+        stats->setText(QApplication::translate("BucciMain", "Stats", 0));
+        settings->setText(QApplication::translate("BucciMain", "Settings", 0));
+        exit->setText(QApplication::translate("BucciMain", "Exit", 0));
+        howToPlay->setText(QApplication::translate("BucciMain", "How To Play", 0));
     } // retranslateUi
 
 };

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "buccigame.h"
+#include "settings.h"
 
 namespace Ui {
 class BucciMain;
@@ -17,13 +18,20 @@ public:
     ~BucciMain();
 
 private slots:
-    void on_pushButton_4_clicked();
+    void on_exit_clicked();
 
-    void on_pushButton_clicked();
+    void on_settings_clicked();
+
+    void on_stats_clicked();
+
+    void on_newGame_clicked();
+
+    void on_howToPlay_clicked();
 
 private:
     Ui::BucciMain *ui;
     BucciGame *bucciGame;
+    Settings *settings;
 };
 
 #endif // BUCCIMAIN_H

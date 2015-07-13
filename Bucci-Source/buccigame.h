@@ -42,7 +42,7 @@ private:
     QRect drawStack, discardPile, deadPile, playerHand, playerFaceUp, playerFaceDown;
     QTimer *timer;
     QPixmap *cardBack;
-    QPushButton *pickup;
+    QPushButton *pickup, *exit;
 
     Deck *deck;
     Player *player;
