@@ -10,6 +10,8 @@ Player::Player()
 
 Player::~Player()
 {
+    qDebug() << "Player dec'tor called";
+
     if(!playerCardsFaceDown.empty())
     {
         playerCardsFaceDown.clear();

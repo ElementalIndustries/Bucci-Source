@@ -20,10 +20,14 @@ Card::Card(QWidget *w = 0)
 
     defaultX = w->width() / 2 - 20;
     defaultY = w->height() - (w->height() / 3);
+
+    inQueue = false;
 }//end of Card c'tor
 
 Card::~Card()
 {
+    qDebug() << "Card dec'tor called";
+
     delete cardFace;
 }//end of card dec'tor
 
@@ -166,6 +170,16 @@ void Card::initCompareValue(Card *card)
     QString val = this->value;
     QStringList values = val.split(",", QString::SkipEmptyParts);
     compareValue = values[1].trimmed().toInt();
+}
+
+void Card::setInQueue()
+{
+    inQueue = !inQueue;
+}
+
+void Card::setIndexLoc(int loc)
+{
+    this->indexLoc = loc;
 }//end of initCompareValue
 
 QString Card::getCardValue()
@@ -203,6 +217,11 @@ int Card::getSizeY()
 int Card::getCompareValue()
 {
     return compareValue;
+}
+
+int Card::getIndexLoc()
+{
+    return indexLoc;
 }//end of getCompareValue
 
 bool Card::containsPoint(int x, int y, QRect rect)
@@ -231,6 +250,11 @@ bool Card::equalsValue(Card card, QString compareStr)
     }
     else
         return false;
+}
+
+bool Card::getInQueue()
+{
+    return inQueue;
 }//end of equalsValue
 
 

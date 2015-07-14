@@ -24,17 +24,20 @@ public:
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
 
+    void killPile();
+
     bool contains(Card *card, QVector<Card *> deck);
 
 private:
-    int turn;
+    int turn, fourCount;
 
-    bool handEmpty, faceUpEmpty, faceDownEmpty;
+    bool showInvalidMove, handEmpty, faceUpEmpty, faceDownEmpty, showKillPile, showChallenge, showReset, showFourKind;
 
     vector<Card*>deckRef;
     QVector<Card*>shuffledDeck;
     QVector<Card*>discardStack;
     QVector<Card*>deadStack;
+    QVector<Card*>queue;
 
     enum cardSuit {SPADE, CLUB, DIAMOND, HEART};
     enum cardValue {ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
@@ -42,7 +45,7 @@ private:
     QRect drawStack, discardPile, deadPile, playerHand, playerFaceUp, playerFaceDown;
     QTimer *timer;
     QPixmap *cardBack;
-    QPushButton *pickup, *exit;
+    QPushButton *pickup, *exit, *playCards;
 
     Deck *deck;
     Player *player;
@@ -52,11 +55,11 @@ private:
 
     QPoint *mousePos;
 
-    bool showInvalidMove;
 
 public slots:
     void updateField();
     void pickupCards();
+    void emptyQueue();
 };
 
 #endif // BUCCIGAME_H

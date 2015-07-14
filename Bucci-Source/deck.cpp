@@ -11,6 +11,7 @@ Deck::Deck()
 
 Deck::~Deck()
 {
+    qDebug() << "Deck dec'tor called";
     delete[] deck;
 }//end of Deck c'tor
 
