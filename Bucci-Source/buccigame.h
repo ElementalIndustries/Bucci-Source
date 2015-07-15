@@ -55,11 +55,11 @@ private:
 
     QPoint *mousePos;
 
-
 public slots:
     void updateField();
     void pickupCards();
     void emptyQueue();
 };
+
 
 #endif // BUCCIGAME_H

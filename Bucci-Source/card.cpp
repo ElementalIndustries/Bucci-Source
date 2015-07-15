@@ -26,7 +26,7 @@ Card::Card(QWidget *w = 0)
 
 Card::~Card()
 {
-    qDebug() << "Card dec'tor called";
+//    qDebug() << "Card dec'tor called";
 
     delete cardFace;
 }//end of card dec'tor

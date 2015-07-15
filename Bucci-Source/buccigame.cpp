@@ -22,7 +22,7 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     exit->move(10, this->height() - 30);
     exit->resize(80, 25);
 
-    playCards = new QPushButton("Play Cards", this);
+    playCards = new QPushButton("[WIP] DO NOT USE", this);
     playCards->move(this->width() - 110, this->height() - 30);
     playCards->resize(100, 25);
 
@@ -52,7 +52,7 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
 
     connect(pickup, SIGNAL(clicked()), this, SLOT(pickupCards()));
     connect(exit, SIGNAL(clicked()), this, SLOT(close()));
-    connect(playCards, SIGNAL(clicked()), this, SLOT(emptyQueue()));
+//    connect(playCards, SIGNAL(clicked()), this, SLOT(emptyQueue()));
 
     //initializes the deck
     deck->init();
@@ -120,6 +120,7 @@ BucciGame::~BucciGame()
 void BucciGame::paintEvent(QPaintEvent *e)
 {
     QPainter paint(this);
+    QPen pen(Qt::black);
 
     paint.setPen(Qt::black);
 
@@ -140,6 +141,7 @@ void BucciGame::paintEvent(QPaintEvent *e)
     if(showFourKind) {paint.drawText(discardPile.x() - 15, discardPile.y() + 71, QString("Four of a Kind")); }
 
     QPainter queuePaint(this);
+    queuePaint.setPen(pen);
 
     for(int i = 0; i < 3; i++)
     {
@@ -166,11 +168,11 @@ void BucciGame::paintEvent(QPaintEvent *e)
                 setCardCoord(2, j);
                 if(player->getCardAt(i)->getInQueue())
                 {
-                    queuePaint.setPen(Qt::green);
+                    pen.setColor(Qt::green);
                 }
                 else
                 {
-                    queuePaint.setPen(Qt::black);
+                    pen.setColor(Qt::black);
                 }
 
                 player->hand.at(j)->drawCard(queuePaint, i, player->hand.at(j)->getCardValue());
@@ -301,7 +303,13 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
 
                     if(player->getFaceDownAt(i)->getCompareValue() == 2 || player->getFaceDownAt(i)->getCompareValue() == 10 || player->getFaceDownAt(i)->getCompareValue() == 1)
                     {
-                        queue.push_back(player->getFaceDownAt(i));
+                        discardStack.push_back(player->getFaceDownAt(i));
+
+                        //Removes the dummy value from the stack
+                        if(discardStack.at(0)->getCompareValue() == -1)
+                        {
+                            discardStack.remove(0);
+                        }
 
                         if((*(discardStack.at(discardStack.size() - 1))).getCompareValue() == 10 || showFourKind)
                         {
@@ -321,7 +329,13 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                     }
                     else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceDownAt(i)->getCompareValue())
                     {
-                        queue.push_back(player->getFaceDownAt(i));
+                        discardStack.push_back(player->getFaceDownAt(i));
+
+                        //Removes the dummy value from the stack
+                        if(discardStack.at(0)->getCompareValue() == -1)
+                        {
+                            discardStack.remove(0);
+                        }
                     }
                     else
                     {
@@ -384,7 +398,13 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
 
                     if(player->getFaceUpAt(i)->getCompareValue() == 2 || player->getFaceUpAt(i)->getCompareValue() == 10 || player->getFaceUpAt(i)->getCompareValue() == 1)
                     {
-                        queue.push_back(player->getFaceUpAt(i));
+                        discardStack.push_back(player->getFaceUpAt(i));
+
+                        //Removes the dummy value from the stack
+                        if(discardStack.at(0)->getCompareValue() == -1)
+                        {
+                            discardStack.remove(0);
+                        }
 
                         if((*(discardStack.at(discardStack.size() - 1))).getCompareValue() == 10 || showFourKind)
                         {
@@ -403,7 +423,13 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                     }
                     else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceUpAt(i)->getCompareValue())
                     {
-                        queue.push_back(player->getFaceUpAt(i));
+                        discardStack.push_back(player->getFaceUpAt(i));
+
+                        //Removes the dummy value from the stack
+                        if(discardStack.at(0)->getCompareValue() == -1)
+                        {
+                            discardStack.remove(0);
+                        }
                     }
                     else
                     {
@@ -469,9 +495,13 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
 
                     if(player->getCardAt(i)->getCompareValue() == 2 || player->getCardAt(i)->getCompareValue() == 10 || player->getCardAt(i)->getCompareValue() == 1)
                     {
-                        player->getCardAt(i)->setInQueue();
-                        player->getCardAt(i)->setIndexLoc(i);
-                        queue.push_back(player->getCardAt(i));
+                        discardStack.push_back(player->getCardAt(i));
+
+                        //Removes the dummy value from the stack
+                        if(discardStack.at(0)->getCompareValue() == -1)
+                        {
+                            discardStack.remove(0);
+                        }
 
                         if((*(discardStack.at(discardStack.size() - 1))).getCompareValue() == 10 || showFourKind)
                         {
@@ -488,13 +518,31 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                             showChallenge = true;
                         }
 
+                        if(player->getNumOfCardsInHand() > 3)
+                        {
+                            qDebug() << "Removing card at index" << i;
+                            player->removeCard(i);
+                            goto newTurn;
+                        }
+
                     }
                     //Handles all non-special fuction cards and being able to play aces when a two is the top card in the discard pile and not allow play of non-special cards when an ace is played.
                     else if((discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getCardAt(i)->getCompareValue() || discardStack.at(discardStack.size() - 1)->getCompareValue() == 2) && !showChallenge)
                     {
-                        player->getCardAt(i)->setInQueue();
-                        player->getCardAt(i)->setIndexLoc(i);
-                        queue.push_back(player->getCardAt(i));
+                        discardStack.push_back(player->getCardAt(i));
+
+                        //Removes the dummy value from the stack
+                        if(discardStack.at(0)->getCompareValue() == -1)
+                        {
+                            discardStack.remove(0);
+                        }
+
+                        if(player->getNumOfCardsInHand() > 3)
+                        {
+                            qDebug() << "Removing card at index" << i;
+                            player->removeCard(i);
+                            goto newTurn;
+                        }
                     }
                     else
                     {
@@ -502,38 +550,38 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                         break;
                     }
 
-//                    //Draw Card
-//                    player->removeCard(i);
-//                    player->setHand(shuffledDeck.at(0));
+                    //Draw Card
+                    player->removeCard(i);
+                    player->setHand(shuffledDeck.at(0));
 
-//                    if(shuffledDeck.size() > 1)
-//                    {
-//                        shuffledDeck.erase(shuffledDeck.begin());
-//                    }
-//                    else
-//                    {
-//                        Card *card = new Card(this);
-//                        shuffledDeck.push_back(card);
-//                        shuffledDeck.erase(shuffledDeck.begin());
-//                    }
+                    if(shuffledDeck.size() > 1)
+                    {
+                        shuffledDeck.erase(shuffledDeck.begin());
+                    }
+                    else
+                    {
+                        Card *card = new Card(this);
+                        shuffledDeck.push_back(card);
+                        shuffledDeck.erase(shuffledDeck.begin());
+                    }
 
-//                    if(player->hand.at(0)->getCompareValue() == -1 && player->hand.at(1)->getCompareValue() == -1 && player->hand.at(2)->getCompareValue() == -1)
-//                    {
-//                        player->hand.clear();
-//                        handEmpty = true;
-//                    }
-//newTurn:
-//                    turn++;
+                    if(player->hand.at(0)->getCompareValue() == -1 && player->hand.at(1)->getCompareValue() == -1 && player->hand.at(2)->getCompareValue() == -1)
+                    {
+                        player->hand.clear();
+                        handEmpty = true;
+                    }
+newTurn:
+                    turn++;
 
-//                    //If the last card removed was the last card in the QVector, do not adjust the card position
-//                    //This will throw an 'out of range' exception without the 'if' condition statement
-//                    if(!handEmpty)
-//                    {
-//                        if(i < player->getNumOfCardsInHand())
-//                        {
-//                            setCardCoord(2, i);
-//                        }
-//                    }
+                    //If the last card removed was the last card in the QVector, do not adjust the card position
+                    //This will throw an 'out of range' exception without the 'if' condition statement
+                    if(!handEmpty)
+                    {
+                        if(i < player->getNumOfCardsInHand())
+                        {
+                            setCardCoord(2, i);
+                        }
+                    }
 
                     break;
                 }
@@ -871,8 +919,6 @@ bool BucciGame::contains(Card* card, QVector<Card *> deck)
 
 void BucciGame::updateField()
 {
-//    player->setNumOfCardsInHand();
-
     this->update();
 }//end of updateField
 
@@ -913,67 +959,12 @@ void BucciGame::pickupCards()
     discardStack.push_back(dummy);
 
     discardStack.remove(0, discardStack.size() - 1);
-}
+
+}//end of pickupCards
 
 void BucciGame::emptyQueue()
 {
-    //Removes the dummy value from the stack
-    if(discardStack.at(0)->getCompareValue() == -1)
-    {
-        discardStack.remove(0);
-    }
 
-    for(int i = 0; i < queue.size(); i++)
-    {
-        discardStack.push_back(queue.at(i));
-
-        if(player->getNumOfCardsInHand() > 3)
-        {
-            qDebug() << "Removing card at index" << queue.at(i)->getIndexLoc();
-            player->removeCard(queue.at(i)->getIndexLoc());
-            goto newTurn;
-        }
-
-        //Draw Card
-        player->removeCard(queue.at(i)->getIndexLoc());
-        player->setHand(shuffledDeck.at(0));
-    }
-
-    if(shuffledDeck.size() > 1)
-    {
-        shuffledDeck.erase(shuffledDeck.begin());
-    }
-    else
-    {
-        Card *card = new Card(this);
-        shuffledDeck.push_back(card);
-        shuffledDeck.erase(shuffledDeck.begin());
-    }
-
-    if(player->hand.at(0)->getCompareValue() == -1 && player->hand.at(1)->getCompareValue() == -1 && player->hand.at(2)->getCompareValue() == -1)
-    {
-        player->hand.clear();
-        handEmpty = true;
-    }
-
-newTurn:
-    turn++;
-
-
-    //If the last card removed was the last card in the QVector, do not adjust the card position
-    //This will throw an 'out of range' exception without the 'if' condition statement
-    if(!handEmpty)
-    {
-        for(int i = 0; i < player->getNumOfCardsInHand(); i++)
-        {
-            if(i < player->getNumOfCardsInHand())
-            {
-                setCardCoord(2, i);
-            }
-        }
-    }
-
-    queue.clear();
-}//end of pickupCards
+}
 
 
