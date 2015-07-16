@@ -37,7 +37,6 @@ private:
     QVector<Card*>shuffledDeck;
     QVector<Card*>discardStack;
     QVector<Card*>deadStack;
-    QVector<Card*>queue;
 
     enum cardSuit {SPADE, CLUB, DIAMOND, HEART};
     enum cardValue {ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};

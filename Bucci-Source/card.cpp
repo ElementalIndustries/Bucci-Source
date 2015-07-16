@@ -112,9 +112,22 @@ void Card::drawCard(QPainter &painter, int vector, QString value)
         val.truncate(val.indexOf(' '));
         val.insert(0,' ');
 
-        if(drawRect) { painter.drawRect(posX, posY, 30, 40); }
+
+        if(drawRect)
+        {
+            if(inQueue)
+            {
+                painter.setPen(Qt::green);
+            }
+            else
+            {
+                painter.setPen(Qt::black);
+            }
+            painter.drawRect(posX, posY, 30, 40);
+        }
 
         if(drawText) { painter.drawText(posX, posY + 10, val); }
+
 
     }
 }//end of drawCard
