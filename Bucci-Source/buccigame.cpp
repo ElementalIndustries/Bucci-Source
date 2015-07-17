@@ -3,11 +3,14 @@
 #include <QPainter>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <sstream>
+#include <stdio.h>
 
 #include <QDebug>
 #include <QMouseEvent>
 
-BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
+BucciGame::BucciGame(bool loadGame = false, QWidget *parent) : QWidget(parent)
 {
     deck = new Deck();
     player = new Player();
@@ -51,13 +54,20 @@ BucciGame::BucciGame(QWidget *parent) : QWidget(parent)
     timer->start();
 
     connect(pickup, SIGNAL(clicked()), this, SLOT(pickupCards()));
-    connect(exit, SIGNAL(clicked()), this, SLOT(close()));
+    connect(exit, SIGNAL(clicked()), this, SLOT(saveExit()));
     connect(playCards, SIGNAL(clicked()), this, SLOT(emptyQueue()));
 
     //initializes the deck
-    deck->init();
-    setVecs();
 
+    if(!loadGame)
+    {
+        deck->init();
+        setVecs();
+    }
+    else
+    {
+        loadLastGame();
+    }
 
 }//end c'tor
 
@@ -812,6 +822,211 @@ void BucciGame::setCardCoord(int vector, int index)
     }
 }//end of setCardCoord
 
+void BucciGame::loadLastGame()
+{
+    QString saveFileLoc = QString("../Bucci-Source/Saves/latest.bsg");
+
+    if(saveFileLoc.toStdString().c_str() != 0)
+    {
+        std::rename("../Bucci-Source/Saves/latest.bsg", "../Bucci-Source/Saves/latest.txt");
+
+        ifstream load;
+        load.open("../Bucci-Source/Saves/latest.txt");
+
+        if(load.is_open())
+        {
+            string cardsInHand;
+            string cardValue;
+
+            load >> cardsInHand;
+
+            stringstream convert(cardsInHand);
+            int cardCount;
+
+            if(!(convert >> cardCount))
+                cardCount = 0;
+
+            qDebug() << "Player's hand size:" << cardCount;
+
+            getline(load, cardValue);
+
+            for(int i = 0; i < cardCount; i++)
+            {
+                Card* card = new Card(this);
+                getline(load, cardValue);
+                card->setCardValue(QString::fromStdString(cardValue));
+                qDebug() << "Card value:" << card->getCardValue();
+                card->initCompareValue(card);
+                player->setHand(card);
+            }
+
+            string faceDowns;
+            load >> faceDowns;
+
+            stringstream convertFD(faceDowns);
+
+            if(!(convertFD >> cardCount))
+                cardCount = 0;
+
+            getline(load, cardValue);
+
+            qDebug() << "Loading Face Downs";
+
+            for(int i = 0; i < cardCount; i++)
+            {
+                Card* card = new Card(this);
+                getline(load, cardValue);
+                card->setCardValue(QString::fromStdString(cardValue));
+                qDebug() << "Card value:" << card->getCardValue();
+                card->initCompareValue(card);
+                player->setFaceDown(card);
+            }
+
+            string faceUps;
+            load >> faceUps;
+
+            stringstream convertFU(faceUps);
+
+            if(!(convertFU >> cardCount))
+                cardCount = 0;
+
+            getline(load, cardValue);
+
+            qDebug() << "Loading Face Ups";
+
+            for(int i = 0; i < cardCount; i++)
+            {
+                Card* card = new Card(this);
+                getline(load, cardValue);
+                card->setCardValue(QString::fromStdString(cardValue));
+                qDebug() << "Card value:" << card->getCardValue();
+                card->initCompareValue(card);
+                player->setFaceUp(card);
+            }
+
+            string cardsInDeck;
+            load >> cardsInDeck;
+
+            stringstream convertDeck(cardsInDeck);
+
+            if(!(convertDeck >> cardCount))
+                cardCount = 0;
+
+            getline(load, cardValue);
+
+            qDebug() << "Loading Deck";
+
+            for(int i = 0; i < cardCount; i++)
+            {
+                Card* card = new Card(this);
+                getline(load, cardValue);
+                card->setCardValue(QString::fromStdString(cardValue));
+                qDebug() << "Card value:" << card->getCardValue();
+                card->initCompareValue(card);
+                shuffledDeck.push_back(card);
+            }
+
+            string discard;
+            load >> discard;
+
+            stringstream convertDiscard(discard);
+
+            if(!(convertDiscard >> cardCount))
+                cardCount = 0;
+
+            getline(load, cardValue);
+
+            qDebug() << "Loading Discard Pile";
+
+            for(int i = 0; i < cardCount; i++)
+            {
+                Card* card = new Card(this);
+                getline(load, cardValue);
+                card->setCardValue(QString::fromStdString(cardValue));
+                qDebug() << "Card value:" << card->getCardValue();
+                card->initCompareValue(card);
+                discardStack.push_back(card);
+            }
+
+            string dead;
+
+            load >> dead;
+
+            stringstream convertDead(dead);
+
+            if(!(convertDead >> cardCount))
+                cardCount = 0;
+
+            if(0 != cardCount)
+            {
+                getline(load, cardValue);
+
+                qDebug() << "Loading Dead Pile";
+
+                for(int i = 0; i < cardCount; i++)
+                {
+                    Card* card = new Card (this);
+                    getline(load, cardValue);
+                    card->setCardValue(QString::fromStdString(cardValue));
+                    qDebug() << "Card Value:" << card->getCardValue();
+                    card->initCompareValue(card);
+                    deadStack.push_back(card);
+                }
+            }
+        }
+
+        load.close();
+
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 3; j ++)
+            {
+                if(0 == i)
+                {
+                    if(0 == j)
+                    {
+                        (*(player->getFaceDownAt(j))).setX(this->width() / 2 - 66);
+                    }
+                    else if(1 == j || 2 == j)
+                    {
+                        (*(player->getFaceDownAt(j))).setX((*(player->getFaceDownAt(j - 1))).getPosX() + 46);
+                    }
+
+                    (*(player->getFaceDownAt(j))).setY(this->height() - (this->height() / 3));
+                }
+                else if(1 == i)
+                {
+                    if(0 == j)
+                    {
+                        (*(player->getFaceUpAt(j))).setX(this->width() / 2 - 66);
+                    }
+                    else if(1 == j || 2 == j)
+                    {
+                        (*(player->getFaceUpAt(j))).setX((*(player->getFaceUpAt(j - 1))).getPosX() + 46);
+                    }
+
+                    (*(player->getFaceUpAt(j))).setY(this->height() - (this->height() / 3)  + 15);
+
+                }
+                else if(2 == i)
+                {
+                    if(0 == j)
+                    {
+                        (*(player->getCardAt(j))).setX(this->width() / 2 - 66);
+                    }
+                    else if(1 == j || 2 == j)
+                    {
+                        (*(player->getCardAt(j))).setX((*(player->getCardAt(j - 1))).getPosX() + 46);
+                    }
+
+                    (*(player->getCardAt(j))).setY(this->height() - (this->height() / 3) + 66);
+                }
+            }
+        }
+
+    }
+}//end of loadLastGame();
+
 bool BucciGame::contains(Card* card, QVector<Card *> deck)
 {
     bool inDeck = false;
@@ -978,6 +1193,79 @@ newTurn:
             break;
         }
     }
+}
+
+void BucciGame::saveExit()
+{
+    ofstream save;
+    save.open("../Bucci-Source/Saves/latest.txt");
+
+    save << player->getNumOfCardsInHand() << endl;
+
+    if(!player->hand.empty())
+    {
+        foreach(Card* card, player->hand)
+        {
+            save << card->getCardValue().toStdString() << endl;
+        }
+    }
+
+    save << 3 << endl;
+
+    if(!player->playerCardsFaceDown.empty())
+    {
+        foreach(Card* card, player->playerCardsFaceDown)
+        {
+            save << card->getCardValue().toStdString() << endl;
+        }
+    }
+
+    save << 3 << endl;
+
+    if(!player->playerCardsFaceUp.empty())
+    {
+        foreach(Card* card, player->playerCardsFaceUp)
+        {
+            save << card->getCardValue().toStdString() << endl;
+        }
+    }
+
+    save << shuffledDeck.size() << endl;
+
+    if(!shuffledDeck.empty())
+    {
+        foreach(Card* card, shuffledDeck)
+        {
+            save << card->getCardValue().toStdString() << endl;
+        }
+    }
+
+    save << discardStack.size() << endl;
+
+    if(!discardStack.empty())
+    {
+        foreach(Card* card, discardStack)
+        {
+            save << card->getCardValue().toStdString() << endl;
+        }
+    }
+
+    save << deadStack.size() << endl;
+
+    if(!discardStack.empty())
+    {
+        foreach(Card* card, deadStack)
+        {
+            save << card->getCardValue().toStdString() << endl;
+        }
+    }
+
+    save.flush();
+    save.close();
+
+    std::rename("../Bucci-Source/Saves/latest.txt", "../Bucci-Source/Saves/latest.bsg");
+
+    this->close();
 }
 
 

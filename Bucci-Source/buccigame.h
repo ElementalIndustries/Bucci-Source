@@ -18,7 +18,7 @@ class BucciGame : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BucciGame(QWidget *parent = 0);
+    explicit BucciGame(bool loadGame, QWidget *parent = 0);
     ~BucciGame();
 
     void paintEvent(QPaintEvent *e);
@@ -51,6 +51,7 @@ private:
 
     void setVecs();
     void setCardCoord(int vector, int index);
+    void loadLastGame();
 
     QPoint *mousePos;
 
@@ -58,6 +59,7 @@ public slots:
     void updateField();
     void pickupCards();
     void emptyQueue();
+    void saveExit();
 };
 
 

@@ -9,6 +9,14 @@ BucciMain::BucciMain(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QWidget::setFixedSize(this->width(), this->height());
+
+    QPixmap bkgnd("../Bucci-Source/Images/ElementalIdenticon.png");
+
+    QPalette palette;
+    palette.setBrush(QPalette::Background , bkgnd);
+    this->setPalette(palette);
+
     bucciGame = NULL;
     settings = NULL;
 }//end of BucciMain c'tor
@@ -25,12 +33,12 @@ void BucciMain::on_newGame_clicked()
 {
     if(bucciGame == NULL)
     {
-        bucciGame = new BucciGame();
+        bucciGame = new BucciGame(false);
     }
     else
     {
         delete bucciGame;
-        bucciGame = new BucciGame();
+        bucciGame = new BucciGame(false);
     }
 
     bucciGame->show();
@@ -61,3 +69,15 @@ void BucciMain::on_howToPlay_clicked()
 {
 
 }//end of on_howToPlay_clicked()
+
+void BucciMain::on_resumeGame_clicked()
+{
+    if(bucciGame != NULL)
+    {
+        delete bucciGame;
+    }
+
+    bucciGame = new BucciGame(true);
+
+    bucciGame->show();
+}

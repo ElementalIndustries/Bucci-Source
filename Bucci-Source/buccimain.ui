@@ -20,10 +20,17 @@
       <x>160</x>
       <y>30</y>
       <width>77</width>
-      <height>141</height>
+      <height>170</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="vLayout">
+     <item>
+      <widget class="QPushButton" name="resumeGame">
+       <property name="text">
+        <string>Continue</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="newGame">
        <property name="text">

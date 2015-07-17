@@ -1,6 +1,7 @@
 #include "card.h"
 #include <iostream>
 #include <QDebug>
+#include <QPainter>
 
 using namespace std;
 
@@ -123,10 +124,19 @@ void Card::drawCard(QPainter &painter, int vector, QString value)
             {
                 painter.setPen(Qt::black);
             }
+
             painter.drawRect(posX, posY, 30, 40);
         }
 
-        if(drawText) { painter.drawText(posX, posY + 10, val); }
+        if(drawText)
+        {
+            if(painter.pen().color() == Qt::green)
+            {
+                painter.setPen(Qt::black);
+            }
+
+            painter.drawText(posX, posY + 10, val);
+        }
 
 
     }
