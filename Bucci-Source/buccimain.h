@@ -28,6 +28,10 @@ private slots:
 
     void on_howToPlay_clicked();
 
+    void on_pushButton_clicked();
+
+    void on_resumeGame_clicked();
+
 private:
     Ui::BucciMain *ui;
     BucciGame *bucciGame;

@@ -18,18 +18,20 @@ class BucciGame : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BucciGame(QWidget *parent = 0);
+    explicit BucciGame(bool loadGame, QWidget *parent = 0);
     ~BucciGame();
 
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
 
+    void killPile();
+
     bool contains(Card *card, QVector<Card *> deck);
 
 private:
-    int turn;
+    int turn, fourCount;
 
-    bool handEmpty, faceUpEmpty, faceDownEmpty;
+    bool showInvalidMove, handEmpty, faceUpEmpty, faceDownEmpty, showKillPile, showChallenge, showReset, showFourKind;
 
     vector<Card*>deckRef;
     QVector<Card*>shuffledDeck;
@@ -42,21 +44,23 @@ private:
     QRect drawStack, discardPile, deadPile, playerHand, playerFaceUp, playerFaceDown;
     QTimer *timer;
     QPixmap *cardBack;
-    QPushButton *pickup, *exit;
+    QPushButton *pickup, *exit, *playCards;
 
     Deck *deck;
     Player *player;
 
     void setVecs();
     void setCardCoord(int vector, int index);
+    void loadLastGame();
 
     QPoint *mousePos;
-
-    bool showInvalidMove;
 
 public slots:
     void updateField();
     void pickupCards();
+    void emptyQueue();
+    void saveExit();
 };
+
 
 #endif // BUCCIGAME_H
