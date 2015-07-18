@@ -8,12 +8,14 @@
 #include <stdio.h>
 
 #include <QDebug>
+#include <QMessageBox>
 #include <QMouseEvent>
 
 BucciGame::BucciGame(bool loadGame = false, QWidget *parent) : QWidget(parent)
 {
     deck = new Deck();
     player = new Player();
+    stats = new Stats();
 
     this->resize(580, 580);
 
@@ -352,6 +354,7 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                     {
                         player->playerCardsFaceDown.clear();
                         faceDownEmpty = true;
+                        setPlayerStats(true);
                     }
 
                     turn++;
@@ -1025,6 +1028,61 @@ void BucciGame::loadLastGame()
         }
 
     }
+}
+
+void BucciGame::setPlayerStats(bool win)
+{
+    rename("../Bucci-Source/Data/stats.bdf", "../Bucci-Source/Data/stats/txt");
+
+    ifstream stats;
+    stats.open("../Bucci-Source/Data/stats.txt");
+
+    int wins, loses, cardsInHand;
+
+    if(stats.is_open())
+    {
+        stats >> wins;
+        stats >> loses;
+        stats >> cardsInHand;
+
+        stats.close();
+
+        if(win)
+        {
+            wins++;
+        }
+        else
+        {
+            loses++;
+        }
+    }
+
+    ofstream writeStats;
+    writeStats.open("../Bucci-Source/Data/stats.txt");
+
+    writeStats << wins;
+    writeStats << loses;
+    writeStats << cardsInHand;
+
+    writeStats.close();
+
+    rename("../Bucci-Source/Data/stats.txt", "../Bucci-Source/Data/stats.bdf");
+
+    if(win)
+    {
+        QMessageBox msg;
+        msg.setText("You Win!");
+        msg.exec();
+        this->close();
+    }
+    else
+    {
+        QMessageBox msg;
+        msg.setText("You Lost.");
+        msg.exec();
+        this->close();
+    }
+
 }//end of loadLastGame();
 
 bool BucciGame::contains(Card* card, QVector<Card *> deck)
@@ -1049,6 +1107,7 @@ bool BucciGame::contains(Card* card, QVector<Card *> deck)
 
 void BucciGame::updateField()
 {
+    stats->setMaxCards(player->getNumOfCardsInHand());
     this->update();
 }//end of updateField
 
@@ -1246,7 +1305,14 @@ void BucciGame::saveExit()
     {
         foreach(Card* card, discardStack)
         {
-            save << card->getCardValue().toStdString() << endl;
+            if(card->getCompareValue() == -1)
+            {
+                save << -1 << endl;
+            }
+            else
+            {
+                save << card->getCardValue().toStdString() << endl;
+            }
         }
     }
 

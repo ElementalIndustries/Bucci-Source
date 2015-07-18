@@ -13,6 +13,7 @@
 #include "card.h"
 #include "deck.h"
 #include "player.h"
+#include "stats.h"
 
 class BucciGame : public QWidget
 {
@@ -48,10 +49,12 @@ private:
 
     Deck *deck;
     Player *player;
+    Stats *stats;
 
     void setVecs();
     void setCardCoord(int vector, int index);
     void loadLastGame();
+    void setPlayerStats(bool win);
 
     QPoint *mousePos;
 

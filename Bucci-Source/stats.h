@@ -15,6 +15,9 @@ public:
     explicit Stats(QWidget *parent = 0);
     ~Stats();
 
+    void setMaxCards(int cards);
+    int getMaxCards();
+
 private slots:
     void on_ok_clicked();
 
@@ -22,6 +25,7 @@ private slots:
 
 private:
     Ui::Stats *ui;
+    int maxCardsInHand;
 };
 
 #endif // STATS_H

@@ -38,6 +38,19 @@ Stats::~Stats()
     delete ui;
 }
 
+void Stats::setMaxCards(int cards)
+{
+    if(cards > maxCardsInHand)
+    {
+        maxCardsInHand = cards;
+    }
+}
+
+int Stats::getMaxCards()
+{
+    return maxCardsInHand;
+}
+
 void Stats::on_ok_clicked()
 {
     this->close();

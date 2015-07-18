@@ -1,6 +1,7 @@
 #include "card.h"
 #include <iostream>
 #include <QDebug>
+#include <sstream>
 #include <QPainter>
 
 using namespace std;
@@ -190,9 +191,13 @@ void Card::changeImage(QString image)
 
 void Card::initCompareValue(Card *card)
 {
-    QString val = this->value;
-    QStringList values = val.split(",", QString::SkipEmptyParts);
-    compareValue = values[1].trimmed().toInt();
+    stringstream ss(value.toStdString());
+    if(!(ss >> compareValue))
+    {
+        QString val = this->value;
+        QStringList values = val.split(",", QString::SkipEmptyParts);
+        compareValue = values[1].trimmed().toInt();
+    }
 }
 
 void Card::setInQueue()
