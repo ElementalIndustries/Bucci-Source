@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "buccigame.h"
 #include "settings.h"
+#include "stats.h"
 
 namespace Ui {
 class BucciMain;
@@ -36,6 +37,7 @@ private:
     Ui::BucciMain *ui;
     BucciGame *bucciGame;
     Settings *settings;
+    Stats *stats;
 };
 
 #endif // BUCCIMAIN_H

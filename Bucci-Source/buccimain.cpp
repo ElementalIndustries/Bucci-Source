@@ -19,6 +19,7 @@ BucciMain::BucciMain(QWidget *parent) :
 
     bucciGame = NULL;
     settings = NULL;
+    stats = NULL;
 }//end of BucciMain c'tor
 
 BucciMain::~BucciMain()
@@ -27,6 +28,7 @@ BucciMain::~BucciMain()
     delete ui;
     delete bucciGame;
     delete settings;
+    delete stats;
 }//end of BucciMain dec'tor
 
 void BucciMain::on_newGame_clicked()
@@ -62,6 +64,13 @@ void BucciMain::on_settings_clicked()
 
 void BucciMain::on_stats_clicked()
 {
+    if(stats != NULL)
+    {
+        delete stats;
+    }
+
+    stats = new Stats();
+    stats->show();
 
 }//end of on_stats_clicked()
 
