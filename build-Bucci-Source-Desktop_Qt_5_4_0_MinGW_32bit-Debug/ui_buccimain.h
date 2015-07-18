@@ -30,6 +30,7 @@ public:
     QWidget *centralWidget;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *vLayout;
+    QPushButton *resumeGame;
     QPushButton *newGame;
     QPushButton *stats;
     QPushButton *settings;
@@ -48,12 +49,17 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayoutWidget = new QWidget(centralWidget);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(160, 30, 77, 141));
+        verticalLayoutWidget->setGeometry(QRect(160, 30, 77, 170));
         vLayout = new QVBoxLayout(verticalLayoutWidget);
         vLayout->setSpacing(6);
         vLayout->setContentsMargins(11, 11, 11, 11);
         vLayout->setObjectName(QStringLiteral("vLayout"));
         vLayout->setContentsMargins(0, 0, 0, 0);
+        resumeGame = new QPushButton(verticalLayoutWidget);
+        resumeGame->setObjectName(QStringLiteral("resumeGame"));
+
+        vLayout->addWidget(resumeGame);
+
         newGame = new QPushButton(verticalLayoutWidget);
         newGame->setObjectName(QStringLiteral("newGame"));
 
@@ -99,6 +105,7 @@ public:
     void retranslateUi(QMainWindow *BucciMain)
     {
         BucciMain->setWindowTitle(QApplication::translate("BucciMain", "BucciMain", 0));
+        resumeGame->setText(QApplication::translate("BucciMain", "Continue", 0));
         newGame->setText(QApplication::translate("BucciMain", "New Game", 0));
         stats->setText(QApplication::translate("BucciMain", "Stats", 0));
         settings->setText(QApplication::translate("BucciMain", "Settings", 0));
