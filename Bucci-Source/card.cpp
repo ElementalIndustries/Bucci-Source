@@ -64,14 +64,34 @@ void Card::drawCard(QPainter &painter, int vector, QString value)
         if(!value.contains("This"))
         {
             painter.drawPixmap(posX, posY, 30, 40, *cardFace);
-            drawRect = false;
+            drawRect = true;
         }
         else
         {
-            drawRect = true;
+            drawRect = false;
         }
 
         drawText = false;
+
+        if(drawRect)
+        {
+            if(inQueue)
+            {
+                painter.setPen(Qt::green);
+            }
+            else
+            {
+                painter.setPen(Qt::black);
+            }
+
+            painter.drawRect(posX, posY, 30, 40);
+        }
+
+        if(painter.pen().color() == Qt::green)
+        {
+            painter.setPen(Qt::black);
+        }
+
     }
 
     if(1 == vector || 2 == vector)//1 = Face up cards. 2 = Hand
@@ -110,10 +130,11 @@ void Card::drawCard(QPainter &painter, int vector, QString value)
             drawRect = false;
         }
 
+
+
         QString val = value;
         val.truncate(val.indexOf(' '));
         val.insert(0,' ');
-
 
         if(drawRect)
         {
@@ -138,9 +159,8 @@ void Card::drawCard(QPainter &painter, int vector, QString value)
 
             painter.drawText(posX, posY + 10, val);
         }
-
-
     }
+
 }//end of drawCard
 
 void Card::drawCard(QPainter &painter, int vector, QRect rect, QString value)
@@ -191,8 +211,7 @@ void Card::changeImage(QString image)
 
 void Card::initCompareValue(Card *card)
 {
-    stringstream ss(value.toStdString());
-    if((ss >> compareValue))
+    if(!value.contains("This"))
     {
         QString val = this->value;
         QStringList values = val.split(",", QString::SkipEmptyParts);

@@ -32,7 +32,7 @@ public:
 private:
     int turn, fourCount;
 
-    bool showInvalidMove, handEmpty, faceUpEmpty, faceDownEmpty, showKillPile, showChallenge, showReset, showFourKind;
+    bool showInvalidMove, handEmpty, faceUpEmpty, faceDownEmpty, showKillPile, showChallenge, showReset, showFourKind, wasHandEmptied;
 
     vector<Card*>deckRef;
     QVector<Card*>shuffledDeck;

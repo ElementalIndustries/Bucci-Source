@@ -160,14 +160,14 @@ void BucciGame::paintEvent(QPaintEvent *e)
         {
             foreach(Card *card, player->playerCardsFaceDown)
             {
-                card->drawCard(paint, i , card->getCardValue());
+                card->drawCard(queuePaint, i , card->getCardValue());
             }
         }
         else if(1 == i && !faceUpEmpty) //face ups
         {
             foreach(Card *card, player->playerCardsFaceUp)
             {
-                card->drawCard(paint, i, card->getCardValue());
+                card->drawCard(queuePaint, i, card->getCardValue());
             }
         }
         else if(2 == i && !handEmpty) //hand
@@ -273,92 +273,19 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                 {
                     qDebug() << "Clicked in card" << i << ". Compare Value:" << player->getFaceDownAt(i)->getCompareValue();
 
-                    if(showInvalidMove)
-                        showInvalidMove = false;
-
-                    if(showChallenge)
-                        showChallenge = false;
-
-                    if(showKillPile)
-                        showKillPile = false;
-
-                    if(showReset)
-                        showReset = false;
-
-                    if(showFourKind)
-                        showFourKind = false;
-
-                    fourCount = 1;
-
-                    for(int j = 0; j < discardStack.size(); j++)
-                    {
-                        if(player->getFaceDownAt(i)->getCompareValue() == discardStack.at(j)->getCompareValue())
-                        {
-                            fourCount++;
-                        }
-
-                        if(fourCount == 4)
-                        {
-                            showFourKind = true;
-                            break;
-                        }
-                    }
-
                     if(player->getFaceDownAt(i)->getCompareValue() == 2 || player->getFaceDownAt(i)->getCompareValue() == 10 || player->getFaceDownAt(i)->getCompareValue() == 1)
                     {
-                        player->getCardAt(i)->setInQueue();
-
-//                        //Removes the dummy value from the stack
-//                        if(discardStack.at(0)->getCompareValue() == -1)
-//                        {
-//                            discardStack.remove(0);
-//                        }
-
-//                        if((*(discardStack.at(discardStack.size() - 1))).getCompareValue() == 10 || showFourKind)
-//                        {
-//                            killPile();
-
-//                        }
-//                        else if(discardStack.at(discardStack.size() - 1)->getCompareValue() == 2)
-//                        {
-//                            qDebug() << "Reset Played";
-//                            showReset = true;
-//                        }
-//                        else if(discardStack.at(discardStack.size() - 1)->getCompareValue() == 1)
-//                        {
-//                            qDebug() << "CHALLENGE!";
-//                            showChallenge = true;
-//                        }
-                    }
-                    else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceDownAt(i)->getCompareValue())
-                    {
-//                        discardStack.push_back(player->getFaceDownAt(i));
                         player->getFaceDownAt(i)->setInQueue();
-
-//                        //Removes the dummy value from the stack
-//                        if(discardStack.at(0)->getCompareValue() == -1)
-//                        {
-//                            discardStack.remove(0);
-//                        }
+                    }
+                    else if((discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceDownAt(i)->getCompareValue()|| discardStack.at(discardStack.size() - 1)->getCompareValue() == 2) && !showChallenge)
+                    {
+                        player->getFaceDownAt(i)->setInQueue();
                     }
                     else
                     {
                         showInvalidMove = true;
                         break;
                     }
-
-                    Card *card = new Card(this);
-                    player->replaceCard(0,  i, card);
-
-                    if(player->getFaceDownAt(0)->getCompareValue() == -1 && player->getFaceDownAt(1)->getCompareValue() == -1 && player->getFaceDownAt(2)->getCompareValue() == -1)
-                    {
-                        player->playerCardsFaceDown.clear();
-                        faceDownEmpty = true;
-
-                    }
-
-                    turn++;
-                    break;
                 }
             }
         }
@@ -370,55 +297,9 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                 {
                     qDebug() << "Clicked in card" << i << ". Compare Value:" << player->getFaceUpAt(i)->getCompareValue();
 
-                    if(showInvalidMove)
-                        showInvalidMove = false;
-
-                    if(showChallenge)
-                        showChallenge = false;
-
-                    if(showKillPile)
-                        showKillPile = false;
-
-                    if(showReset)
-                        showReset = false;
-
-                    if(showFourKind)
-                        showFourKind = false;
-
-                    fourCount = 1;
-
-                    for(int j = 0; j < discardStack.size(); j++)
-                    {
-                        if(player->getFaceDownAt(i)->getCompareValue() == discardStack.at(j)->getCompareValue())
-                        {
-                            fourCount++;
-                        }
-
-                        if(fourCount == 4)
-                        {
-                            showFourKind = true;
-                            break;
-                        }
-                    }
-
                     if(player->getFaceUpAt(i)->getCompareValue() == 2 || player->getFaceUpAt(i)->getCompareValue() == 10 || player->getFaceUpAt(i)->getCompareValue() == 1)
                     {
-                        player->getCardAt(i)->setInQueue();
-
-//                        if((*(discardStack.at(discardStack.size() - 1))).getCompareValue() == 10 || showFourKind)
-//                        {
-//                            killPile();
-//                        }
-//                        else if(discardStack.at(discardStack.size() - 1)->getCompareValue() == 2)
-//                        {
-//                            qDebug() << "Reset Played";
-//                            showReset = true;
-//                        }
-//                        else if(discardStack.at(discardStack.size() - 1)->getCompareValue() == 1)
-//                        {
-//                            qDebug() << "CHALLENGE!";
-//                            showChallenge = true;
-//                        }
+                        player->getFaceUpAt(i)->setInQueue();
                     }
                     else if((discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceUpAt(i)->getCompareValue() || discardStack.at(discardStack.size() - 1)->getCompareValue() == 2) && !showChallenge)
                     {
@@ -429,19 +310,6 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                         showInvalidMove = true;
                         break;
                     }
-
-//                    Card *card = new Card(this);
-//                    player->replaceCard(1,  i, card);
-
-//                    turn++;
-
-//                    if(player->getFaceUpAt(0)->getCompareValue() == -1 && player->getFaceUpAt(1)->getCompareValue() == -1 && player->getFaceUpAt(2)->getCompareValue() == -1)
-//                    {
-//                        player->playerCardsFaceUp.clear();
-//                        faceUpEmpty = true;
-//                    }
-
-//                    break;
                 }
             }
         }
@@ -452,38 +320,6 @@ void BucciGame::mousePressEvent(QMouseEvent *e)
                 if((*(player->getCardAt(i))).containsPoint(e->localPos().x(), e->localPos().y(), QRect((*(player->getCardAt(i))).getPosX(), (*(player->getCardAt(i))).getPosY(), (*(player->getCardAt(i))).getSizeX(), (*(player->getCardAt(i))).getSizeY())))
                 {
                     qDebug() << "Clicked in card" << i << ". Compare Value:" << player->getCardAt(i)->getCompareValue();
-
-                    if(showInvalidMove)
-                        showInvalidMove = false;
-
-                    if(showChallenge)
-                        showChallenge = false;
-
-                    if(showKillPile)
-                        showKillPile = false;
-
-                    if(showReset)
-                        showReset = false;
-
-                    if(showFourKind)
-                        showFourKind = false;
-
-                    fourCount = 1;
-
-                    for(int j = 0; j < discardStack.size(); j++)
-                    {
-                        if(player->getCardAt(i)->getCompareValue() == discardStack.at(j)->getCompareValue())
-                        {
-                            fourCount++;
-                            qDebug() << "Four count:" << fourCount;
-                        }
-
-                        if(fourCount == 4)
-                        {
-                            showFourKind = true;
-                            break;
-                        }
-                    }
 
                     if(player->getCardAt(i)->getCompareValue() == 2 || player->getCardAt(i)->getCompareValue() == 10 || player->getCardAt(i)->getCompareValue() == 1)
                     {
@@ -1035,20 +871,22 @@ void BucciGame::setPlayerStats(bool win)
 
         if(win)
         {
-            wins++;
+            wins += 1;
         }
         else
         {
-            loses++;
+            loses += 1;
         }
     }
+
+    stats.close();
 
     ofstream writeStats;
     writeStats.open("../Bucci-Source/Data/stats.txt");
 
-    writeStats << wins;
-    writeStats << loses;
-    writeStats << cardsInHand;
+    writeStats << wins << endl;
+    writeStats << loses << endl;
+    writeStats << cardsInHand << endl;
 
     writeStats.close();
 
@@ -1100,28 +938,40 @@ void BucciGame::updateField()
 
 void BucciGame::pickupCards()
 {
-    if(handEmpty)
-    {
-        handEmpty = false;
-    }
-
     if(showChallenge)
         showChallenge = false;
 
     for(int i = 0; i < discardStack.size(); i++)
     {
-        qDebug() << i << "of" << discardStack.size();
+        qDebug() << "Picking up" <<i << "of" << discardStack.size();
+        qDebug() << "Is Hand empty:" << handEmpty;
+        qDebug() << "Was Hand Emptied:" << wasHandEmptied;
 
         ///Searches player's hand for any card holding a dummy value.
         ///If dummy value is found (comparisonValue == -1), replace it with a card from the discard pile
         ///otherwise put the card from the discard stack at the end of the player's hand vector
 
-        if(player->getCardAt(i)->getCompareValue() == -1)
+        if(!handEmpty)
         {
-            player->replaceCard(2, i, discardStack.at(i));
+            if(!wasHandEmptied)
+            {
+                if(player->getCardAt(i)->getCompareValue() == -1)
+                {
+                    player->replaceCard(2, i, discardStack.at(i));
+                }
+                else
+                {
+                    player->setHand(discardStack.at(i));
+                }
+            }
+            else
+            {
+                player->setHand(discardStack.at(i));
+            }
         }
         else
         {
+            handEmpty = false;
             player->setHand(discardStack.at(i));
         }
 
@@ -1130,6 +980,8 @@ void BucciGame::pickupCards()
         setCardCoord(2, i);
 
     }
+
+    wasHandEmptied = false;
 
     Card* dummy = new Card(this);
     discardStack.push_back(dummy);
@@ -1140,6 +992,23 @@ void BucciGame::pickupCards()
 
 void BucciGame::emptyQueue()
 {
+    int lastCardPlayed;
+
+    if(showInvalidMove)
+        showInvalidMove = false;
+
+    if(showChallenge)
+        showChallenge = false;
+
+    if(showKillPile)
+        showKillPile = false;
+
+    if(showReset)
+        showReset = false;
+
+    if(showFourKind)
+        showFourKind = false;
+
     if(handEmpty && faceUpEmpty)
     {
         for(int i = 0; i < 3; i++)
@@ -1151,6 +1020,7 @@ void BucciGame::emptyQueue()
                 if(player->getFaceDownAt(i)->getCompareValue() == 2 || player->getFaceDownAt(i)->getCompareValue() == 10 || player->getFaceDownAt(i)->getCompareValue() == 1 || showFourKind )
                 {
                     discardStack.push_back(player->getFaceDownAt(i));
+                    lastCardPlayed = player->getFaceDownAt(i)->getCompareValue();
 
                     //Removes the dummy value from the stack
                     if(discardStack.at(0)->getCompareValue() == -1)
@@ -1173,9 +1043,10 @@ void BucciGame::emptyQueue()
                         showChallenge = true;
                     }
                 }
-                else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceDownAt(i)->getCompareValue())
+                else if((discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceDownAt(i)->getCompareValue()|| discardStack.at(discardStack.size() - 1)->getCompareValue() == 2) && !showChallenge)
                 {
                     discardStack.push_back(player->getFaceDownAt(i));
+                    lastCardPlayed = player->getFaceDownAt(i)->getCompareValue();
 
                     //Removes the dummy value from the stack
                     if(discardStack.at(0)->getCompareValue() == -1)
@@ -1191,6 +1062,23 @@ void BucciGame::emptyQueue()
 
                 Card *card = new Card(this);
                 player->replaceCard(0,  i, card);
+
+                fourCount = 0;
+
+                for(int j = 0; j < discardStack.size(); j++)
+                {
+                    if(lastCardPlayed == discardStack.at(j)->getCompareValue())
+                    {
+                        fourCount++;
+                    }
+
+                    if(fourCount == 4)
+                    {
+                        showFourKind = true;
+                        killPile();
+                        break;
+                    }
+                }
 
                 turn++;
 
@@ -1216,8 +1104,9 @@ void BucciGame::emptyQueue()
                 if(player->getFaceUpAt(i)->getCompareValue() == 2 || player->getFaceUpAt(i)->getCompareValue() == 10 || player->getFaceUpAt(i)->getCompareValue() == 1 || showFourKind)
                 {
                     discardStack.push_back(player->getFaceUpAt(i));
+                    lastCardPlayed = player->getFaceUpAt(i)->getCompareValue();
 
-                    //Removes the dummy value from the stack
+                    ///Removes the dummy value from the stack
                     if(discardStack.at(0)->getCompareValue() == -1)
                     {
                         discardStack.remove(0);
@@ -1238,11 +1127,12 @@ void BucciGame::emptyQueue()
                         showChallenge = true;
                     }
                 }
-                else if(discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceUpAt(i)->getCompareValue())
+                else if((discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getFaceUpAt(i)->getCompareValue() || discardStack.at(discardStack.size() - 1)->getCompareValue() == 2) && !showChallenge)
                 {
                     discardStack.push_back(player->getFaceUpAt(i));
+                    lastCardPlayed = player->getFaceUpAt(i)->getCompareValue();
 
-                    //Removes the dummy value from the stack
+                    ///Removes the dummy value from the stack
                     if(discardStack.at(0)->getCompareValue() == -1)
                     {
                         discardStack.remove(0);
@@ -1257,9 +1147,26 @@ void BucciGame::emptyQueue()
                 Card *card = new Card(this);
                 player->replaceCard(1,  i, card);
 
+                fourCount = 0;
+
+                for(int j = 0; j < discardStack.size(); j++)
+                {
+                    if(lastCardPlayed == discardStack.at(j)->getCompareValue())
+                    {
+                        fourCount++;
+                    }
+
+                    if(fourCount == 4)
+                    {
+                        showFourKind = true;
+                        killPile();
+                        break;
+                    }
+                }
+
                 turn++;
 
-                if(player->getFaceUpAt(0)->getCompareValue() == -1 && player->getFaceUpAt(1)->getCompareValue() == -1 && player->getFaceUpAt(2)->getCompareValue() == -1 || showFourKind)
+                if(player->getFaceUpAt(0)->getCompareValue() == -1 && player->getFaceUpAt(1)->getCompareValue() == -1 && player->getFaceUpAt(2)->getCompareValue() == -1)
                 {
                     player->playerCardsFaceUp.clear();
                     faceUpEmpty = true;
@@ -1280,6 +1187,7 @@ void BucciGame::emptyQueue()
                 if(player->getCardAt(i)->getCompareValue() == 2 || player->getCardAt(i)->getCompareValue() == 10 || player->getCardAt(i)->getCompareValue() == 1)
                 {
                     discardStack.push_back(player->getCardAt(i));
+                    lastCardPlayed = player->getCardAt(i)->getCompareValue();
 
                     ///Removes the dummy value from the stack
                     if(discardStack.at(0)->getCompareValue() == -1)
@@ -1287,7 +1195,7 @@ void BucciGame::emptyQueue()
                         discardStack.remove(0);
                     }
 
-                    if((*(discardStack.at(discardStack.size() - 1))).getCompareValue() == 10 || showFourKind)
+                    if((*(discardStack.at(discardStack.size() - 1))).getCompareValue() == 10)
                     {
                         killPile();
                     }
@@ -1314,6 +1222,7 @@ void BucciGame::emptyQueue()
                 else if((discardStack.at(discardStack.size() - 1)->getCompareValue() <= player->getCardAt(i)->getCompareValue() || discardStack.at(discardStack.size() - 1)->getCompareValue() == 2) && !showChallenge)
                 {
                     discardStack.push_back(player->getCardAt(i));
+                    lastCardPlayed = player->getCardAt(i)->getCompareValue();
 
                     ///Removes the dummy value from the stack
                     if(discardStack.at(0)->getCompareValue() == -1)
@@ -1353,8 +1262,26 @@ void BucciGame::emptyQueue()
                 {
                     player->hand.clear();
                     handEmpty = true;
+                    wasHandEmptied = true;
                 }
 newTurn:
+                fourCount = 0;
+
+                for(int j = 0; j < discardStack.size(); j++)
+                {
+                    if(lastCardPlayed == discardStack.at(j)->getCompareValue())
+                    {
+                        fourCount++;
+                    }
+
+                    if(fourCount == 4)
+                    {
+                        showFourKind = true;
+                        killPile();
+                        break;
+                    }
+                }
+
                 turn++;
 
                 ///If the last card removed was the last card in the QVector, do not adjust the card position
@@ -1378,7 +1305,7 @@ void BucciGame::saveExit()
     ofstream save;
     save.open("../Bucci-Source/Saves/latest.txt");
 
-    save << player->getNumOfCardsInHand() << endl;
+    save << player->getNumOfCardsInHand() << "#Player's Hand" << endl;
 
     if(!player->hand.empty())
     {
@@ -1388,7 +1315,7 @@ void BucciGame::saveExit()
         }
     }
 
-    save << 3 << endl;
+    save << 3 << "#Player's Face Downs" <<endl;
 
     if(!player->playerCardsFaceDown.empty())
     {
@@ -1398,7 +1325,7 @@ void BucciGame::saveExit()
         }
     }
 
-    save << 3 << endl;
+    save << 3 << "#Player's face ups" << endl;
 
     if(!player->playerCardsFaceUp.empty())
     {
@@ -1408,7 +1335,7 @@ void BucciGame::saveExit()
         }
     }
 
-    save << shuffledDeck.size() << endl;
+    save << shuffledDeck.size() << "#Shuffled Deck" << endl;
 
     if(!shuffledDeck.empty())
     {
@@ -1418,7 +1345,7 @@ void BucciGame::saveExit()
         }
     }
 
-    save << discardStack.size() << endl;
+    save << discardStack.size() << "#Discard Stack" << endl;
 
     if(!discardStack.empty())
     {
@@ -1435,7 +1362,7 @@ void BucciGame::saveExit()
         }
     }
 
-    save << deadStack.size() << endl;
+    save << deadStack.size() << "#Dead Stack" << endl;
 
     if(!discardStack.empty())
     {
