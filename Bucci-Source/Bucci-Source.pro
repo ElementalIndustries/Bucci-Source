@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     player.cpp \
     deck.cpp \
     settings.cpp \
-    stats.cpp
+    stats.cpp \
+    ai.cpp
 
 HEADERS  += buccimain.h \
     buccigame.h \
@@ -27,7 +28,8 @@ HEADERS  += buccimain.h \
     player.h \
     deck.h \
     settings.h \
-    stats.h
+    stats.h \
+    ai.h
 
 FORMS    += buccimain.ui \
     settings.ui \

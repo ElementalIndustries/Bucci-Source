@@ -54,11 +54,12 @@ void BucciMain::on_exit_clicked()
 
 void BucciMain::on_settings_clicked()
 {
-    if(settings == NULL)
+    if(settings != NULL)
     {
-        settings = new Settings();
+        delete settings;
     }
 
+    settings = new Settings();
     settings->show();
 }//end of on_settings_clicked
 

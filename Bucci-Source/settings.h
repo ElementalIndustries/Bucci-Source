@@ -18,7 +18,11 @@ public:
 private slots:
     void on_ok_clicked();
 
-    void on_cancel_clicked();
+    void on_reset_clicked();
+
+    void on_save_clicked();
+
+    void enableSave();
 
 private:
     Ui::Settings *ui;

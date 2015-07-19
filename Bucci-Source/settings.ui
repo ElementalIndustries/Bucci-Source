@@ -16,13 +16,20 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>240</x>
+     <x>40</x>
      <y>260</y>
-     <width>151</width>
+     <width>331</width>
      <height>41</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="save">
+      <property name="text">
+       <string>Save</string>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="QPushButton" name="ok">
       <property name="text">
@@ -31,11 +38,72 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="cancel">
+     <widget class="QPushButton" name="reset">
       <property name="text">
-       <string>Cancel</string>
+       <string>Reset</string>
       </property>
      </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>30</y>
+     <width>167</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="opponentCountLabel">
+        <property name="text">
+         <string>Number of Opponents:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="opponentCounter">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>3</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="easy">
+        <property name="text">
+         <string>Easy</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="medium">
+        <property name="text">
+         <string>Medium</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="hard">
+        <property name="text">
+         <string>Hard</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
