@@ -192,11 +192,12 @@ void Card::changeImage(QString image)
 void Card::initCompareValue(Card *card)
 {
     stringstream ss(value.toStdString());
-    if(!(ss >> compareValue))
+    if((ss >> compareValue))
     {
         QString val = this->value;
         QStringList values = val.split(",", QString::SkipEmptyParts);
-        compareValue = values[1].trimmed().toInt();
+        card->setCompareValue(values[1].trimmed().toInt());
+        qDebug() << compareValue;
     }
 }
 

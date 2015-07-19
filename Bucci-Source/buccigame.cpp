@@ -1115,13 +1115,17 @@ void BucciGame::pickupCards()
         ///Searches player's hand for any card holding a dummy value.
         ///If dummy value is found (comparisonValue == -1), replace it with a card from the discard pile
         ///otherwise put the card from the discard stack at the end of the player's hand vector
-        if(player->getCardAt(i)->getCompareValue() == -1)
+
+        for(int j = 0; j < player->getNumOfCardsInHand(); j++)
         {
-            player->replaceCard(2, i, discardStack.at(i));
-        }
-        else
-        {
-            player->setHand(discardStack.at(i));
+            if(player->getCardAt(j)->getCompareValue() == -1)
+            {
+                player->replaceCard(2, j, discardStack.at(i));
+            }
+            else
+            {
+                player->setHand(discardStack.at(i));
+            }
         }
 
         player->setNumOfCardsInHand();
