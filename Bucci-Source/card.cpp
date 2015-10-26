@@ -213,10 +213,13 @@ void Card::initCompareValue(Card *card)
 {
     if(!value.contains("This"))
     {
-        QString val = this->value;
-        QStringList values = val.split(",", QString::SkipEmptyParts);
-        card->setCompareValue(values[1].trimmed().toInt());
-        qDebug() << compareValue;
+        if(!value.contains("-1"))
+        {
+            QString val = this->value;
+            QStringList values = val.split(",", QString::SkipEmptyParts);
+            card->setCompareValue(values[1].trimmed().toInt());
+            qDebug() << compareValue;
+        }
     }
 }
 

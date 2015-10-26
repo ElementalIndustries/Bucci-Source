@@ -770,7 +770,11 @@ void BucciGame::loadLastGame()
                 card->setCardValue(QString::fromStdString(cardValue));
                 qDebug() << "Card value:" << card->getCardValue();
                 card->initCompareValue(card);
-                discardStack.push_back(card);
+
+                if(card->getCompareValue() != -1)
+                    discardStack.push_back(card);
+                else
+                    break;
             }
 
             string dead;
@@ -795,7 +799,11 @@ void BucciGame::loadLastGame()
                     card->setCardValue(QString::fromStdString(cardValue));
                     qDebug() << "Card Value:" << card->getCardValue();
                     card->initCompareValue(card);
-                    deadStack.push_back(card);
+
+                    if(card->getCompareValue() != -1)
+                        deadStack.push_back(card);
+                    else
+                        break;
                 }
             }
         }
